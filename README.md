@@ -1,6 +1,6 @@
 # About DCFG
 
-[![Build Status](https://travis-ci.org/watermint/DCFG.svg?branch=master)](https://travis-ci.org/watermint/DCFG)
+[![Build Status](https://travis-ci.org/watermint/dcfg.svg?branch=master)](https://travis-ci.org/watermint/dcfg)
 
 DCFG allows syncing between Google Apps and Dropbox Business. DCFG automates provisioning and deprovisioning of both users and groups. DCFG reads users and groups on Google Apps, then create/update/delete Dropbox accounts and groups.
 
