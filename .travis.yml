@@ -1,0 +1,12 @@
+language: go
+
+go:
+ - 1.6.2
+
+install:
+ - export GOPATH="${TRAVIS_BUILD_DIR}:$GOPATH"
+ - go get -t -v ./...
+
+script:
+ - go test -v ./...
+
