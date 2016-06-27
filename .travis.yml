@@ -11,5 +11,5 @@ install:
  - go get -u google.golang.org/cloud/compute/metadata
 
 script:
- - go test -v ./...
+ - go test -v ./test/github.com/watermint/dcfg
 
