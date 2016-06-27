@@ -34,8 +34,9 @@ func formatLine(level string, values ...interface{}) string {
 	return formatValues(values...)
 }
 
-func Fatal(values ...interface{}) {
-	seelog.Error(formatLine("FATAL", values...))
+func FatalShutdown(suggestedWorkaround string, values ...interface{}) {
+	seelog.Errorf("Suggested workaround:")
+	seelog.Errorf(suggestedWorkaround, values...)
 	seelog.Flush()
 	os.Exit(1)
 }
@@ -57,11 +58,13 @@ func logRuntime() {
 }
 
 func logEnv() {
+	for i, a := range os.Args[1:] {
+		seelog.Tracef("Arg[%d]: [%s]", i, a)
+	}
 	for _, e := range os.Environ() {
 		seelog.Tracef("Env: %s", e)
 	}
 }
-
 
 func logSystem() {
 	if !startupSystemLog {

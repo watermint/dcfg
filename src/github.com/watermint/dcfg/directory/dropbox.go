@@ -32,7 +32,8 @@ func (d *DropboxDirectory) loadMembers() {
 	sel.Limit = dropboxLoadChunkSize
 	ms, err := client.MembersList(&sel)
 	if err != nil {
-		explorer.Fatal("Unable to load Dropbox Team Member", err)
+		seelog.Errorf("Unable to load Dropbox Team Member: err[%s]", err)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth dropbox`")
 	}
 	for _, m := range ms.Members {
 		d.rawMembers = append(d.rawMembers, m)
@@ -50,7 +51,8 @@ func (d *DropboxDirectory) loadMembers() {
 
 		ms, err := client.MembersListContinue(&sel)
 		if err != nil {
-			explorer.Fatal("Unable to load Dropbox Team Member (while continue)", err)
+			seelog.Errorf("Unable to load Dropbox Team Member: err[%s]", err)
+			explorer.FatalShutdown("Please re-run `-auth dropbox`")
 		}
 		for _, m := range ms.Members {
 			d.rawMembers = append(d.rawMembers, m)
@@ -72,7 +74,8 @@ func (d *DropboxDirectory) loadGroupSummaries() {
 	sel.Limit = dropboxLoadChunkSize
 	gs, err := client.GroupsList(&sel)
 	if err != nil {
-		explorer.Fatal("Unable to load Dropbox Group Summary", err)
+		seelog.Errorf("Unable to load Dropbox Group Summary: Err[%s]", err)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth dropbox`")
 	}
 	for _, g := range gs.Groups {
 		d.rawGroupSummaries = append(d.rawGroupSummaries, g)
@@ -87,7 +90,8 @@ func (d *DropboxDirectory) loadGroupSummaries() {
 		sel.Cursor = cursor
 		gs, err := client.GroupsListContinue(&sel)
 		if err != nil {
-			explorer.Fatal("Unable to load Dropbox Group Summary (while continue)", err)
+			seelog.Errorf("Unable to load Dropbox Group Summary: Err[%s]", err)
+			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth dropbox`")
 		}
 		seelog.Tracef("Dropbox Group Summary (Continue) Chunk loaded: %d group(s)", len(gs.Groups))
 		for _, g := range gs.Groups {
@@ -112,7 +116,8 @@ func (d *DropboxDirectory) loadGroups() {
 		results, err := client.GroupsGetInfo(&sel)
 
 		if err != nil {
-			explorer.Fatal("Failed to load Dropbox Group", gs.GroupId, gs.GroupName, err)
+			seelog.Errorf("Failed to load Dropbox Group: GroupId[%s] GroupName[%s] Err[%v]", gs.GroupId, gs.GroupName, err)
+			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth dropbox`")
 		}
 
 		for _, gr := range results {

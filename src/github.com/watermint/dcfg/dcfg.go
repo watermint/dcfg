@@ -84,7 +84,8 @@ func syncUserDeprovision(googleDirectory *directory.GoogleDirectory, dropboxDire
 }
 func syncGroupProvision(googleDirectory *directory.GoogleDirectory, dropboxDirectory *directory.DropboxDirectory, provisioning *connector.DropboxConnector, syncOptions SyncOptions) {
 	if syncOptions.GroupProvisionWhiteList == "" {
-		explorer.Fatal("Group white list file required for group provisioning")
+		seelog.Errorf("Group white list file required for group provisioning")
+		explorer.FatalShutdown("Please specify with option -group-provision-list")
 	}
 
 	groupSync := groupsync.GroupSync{
@@ -102,7 +103,8 @@ func syncGroupProvision(googleDirectory *directory.GoogleDirectory, dropboxDirec
 func groupSyncGroupList(filePath string) (list []string) {
 	f, err := os.Open(filePath)
 	if err != nil {
-		explorer.Fatal("Unable to load Group Sync white list file", filePath, err)
+		seelog.Errorf("Unable to load Group Sync white list file: file[%s] err[%s]", filePath, err)
+		explorer.FatalShutdown("Ensure file [%s] exist and readable", filePath)
 	}
 	defer f.Close()
 	r := bufio.NewReader(f)
@@ -111,7 +113,8 @@ func groupSyncGroupList(filePath string) (list []string) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			explorer.Fatal("Unable to load Group Sync white list file. Error during loading file", filePath, err)
+			seelog.Errorf("Unable to load Group Sync white list file. Error during loading file: file[%s] err[%s]", filePath, err)
+			explorer.FatalShutdown("Ensure file [%s] is appropriate format and encoding")
 		}
 		line := strings.TrimSpace(string(lineRaw))
 		if line != "" {
@@ -145,7 +148,7 @@ func sync(target string, connector *connector.DropboxConnector, syncOptions Sync
 			googleDirectory, dropboxDirectory := loadDirectories(syncOptions)
 			syncUserDeprovision(googleDirectory, dropboxDirectory, connector, syncOptions)
 		default:
-			seelog.Error("Undefined sync type [%s]", x)
+			seelog.Errorf("Undefined sync type [%s]", x)
 		}
 	}
 }

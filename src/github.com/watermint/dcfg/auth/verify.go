@@ -11,7 +11,8 @@ func VerifyDropbox() {
 
 	info, err := teamClient.GetInfo()
 	if err != nil {
-		explorer.Fatal("Failed to load Dropbox Team info", err)
+		seelog.Errorf("Failed to load Dropbox Team info: err[%v]", err)
+		explorer.FatalShutdown("Please re-run `-auth dropbox`")
 	}
 
 	seelog.Infof("Dropbox Team Name: %s", info.Name)
@@ -25,11 +26,13 @@ func VerifyGoogle(domain string) {
 
 	groups, err := client.Groups.List().Domain(domain).Do()
 	if err != nil {
-		explorer.Fatal("Failed to load Google Group", domain, err)
+		seelog.Errorf("Failed to load Google Group: domain[%s] err[%v]", domain, err)
+		explorer.FatalShutdown("Please re-run `-auth google`")
 	}
 	users, err := client.Users.List().Domain(domain).Do()
 	if err != nil {
-		explorer.Fatal("Failed to load Google Users", err)
+		seelog.Errorf("Failed to load Google Users: err[%s]", err)
+		explorer.FatalShutdown("Please re-run `-auth google`")
 	}
 
 	seelog.Infof("Google Groups: %d (partial)", len(groups.Groups))

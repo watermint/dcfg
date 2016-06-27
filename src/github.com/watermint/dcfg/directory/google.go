@@ -47,7 +47,8 @@ func (g *GoogleDirectory) loadUsers() {
 
 	users, err := client.Users.List().MaxResults(googleLoadChunkSize).Domain(g.Domain).Do()
 	if err != nil {
-		explorer.Fatal("Unable to load Google Users", err)
+		seelog.Errorf("Unable to load Google Users: Err[%v]", err)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 	}
 	seelog.Tracef("Google User loaded (chunk): %d user(s)", len(users.Users))
 	for _, u := range users.Users {
@@ -58,7 +59,8 @@ func (g *GoogleDirectory) loadUsers() {
 		seelog.Trace("Loading Google Users (with token)")
 		users, err := client.Users.List().MaxResults(googleLoadChunkSize).PageToken(token).Domain(g.Domain).Do()
 		if err != nil {
-			explorer.Fatal("Unable to load Google Users (with token)", token, err)
+			seelog.Errorf("Unable to load Google Users: Err[%v]", err)
+			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 		}
 		seelog.Tracef("Google User loaded (chunk): %d user(s), token[%s]", len(users.Users), token)
 		for _, x := range users.Users {
@@ -76,7 +78,8 @@ func (g *GoogleDirectory) loadGroup() {
 
 	groups, err := client.Groups.List().MaxResults(googleLoadChunkSize).Domain(g.Domain).Do()
 	if err != nil {
-		explorer.Fatal("Unable to load Google Group", err)
+		seelog.Errorf("Unable to load Google Group: err[%v]", err)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 	}
 	seelog.Tracef("Google Group Loaded (chunk): %d", len(groups.Groups))
 	for _, x := range groups.Groups {
@@ -87,7 +90,8 @@ func (g *GoogleDirectory) loadGroup() {
 		seelog.Trace("Loading Google Groups (with token)")
 		groups, err := client.Groups.List().MaxResults(googleLoadChunkSize).Domain(g.Domain).PageToken(token).Do()
 		if err != nil {
-			explorer.Fatal("Unable to load Google Group (with token)", token, err)
+			seelog.Errorf("Unable to load Google Group (with token): token[%s] err[%s]", token, err)
+			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 		}
 		seelog.Tracef("Google Group Loaded (chunk): %d", len(groups.Groups))
 		for _, x := range groups.Groups {
@@ -103,7 +107,8 @@ func (g *GoogleDirectory) loadMembers(group *admin.Group) (members []*admin.Memb
 
 	m, err := client.Members.List(group.Id).MaxResults(googleLoadChunkSize).Do()
 	if err != nil {
-		explorer.Fatal("Unable to load Google Group Member", err)
+		seelog.Errorf("Unable to load Google Group Member: err[%s]", err)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 	}
 	seelog.Tracef("Google Members of Group loaded (chunk): %d member(s)", len(m.Members))
 	for _, x := range m.Members {
@@ -114,7 +119,8 @@ func (g *GoogleDirectory) loadMembers(group *admin.Group) (members []*admin.Memb
 		seelog.Trace("Loading Google Group Member (with token)")
 		m, err := client.Members.List(group.Id).MaxResults(googleLoadChunkSize).PageToken(token).Do()
 		if err != nil {
-			explorer.Fatal("Unable to load Google Group member (with token)", err)
+			seelog.Errorf("Unable to load Google Group member (with token): Err[%s]", err)
+			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 		}
 		seelog.Tracef("Google Members of Group loaded (chunk): %d member(s)", len(m.Members))
 		for _, x := range m.Members {
@@ -139,7 +145,8 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 
 	r, err := client.Users.List().Customer(customerId).MaxResults(googleLoadChunkSize).Do()
 	if err != nil {
-		explorer.Fatal("Unable to load Google member in Customer: CustomerId[%s]", customerId)
+		seelog.Errorf("Unable to load Google member in Customer: CustomerId[%s]", customerId)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 	}
 	seelog.Tracef("Google Customer Member loaded (chunk): %d", len(r.Users))
 	for _, x := range r.Users {
@@ -154,7 +161,8 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 	for token != "" {
 		r, err := client.Users.List().Customer(customerId).MaxResults(googleLoadChunkSize).PageToken(token).Do()
 		if err != nil {
-			explorer.Fatal("Unable to load Google member in Customer: CustomerId[%s]", customerId)
+			seelog.Errorf("Unable to load Google member in Customer: CustomerId[%s]", customerId)
+			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 		}
 		seelog.Tracef("Google Customer Member loaded (chunk): %d", len(r.Users))
 		for _, x := range r.Users {
@@ -198,7 +206,8 @@ func (g *GoogleDirectory) getFlattenMember(member *admin.Member) (members []Acco
 func (g *GoogleDirectory) getFlattenGroupMembers(groupEmail string) (members []Account) {
 	m, exist := g.rawGroupMembers[groupEmail]
 	if !exist {
-		explorer.Fatal("Google Group member not found", groupEmail)
+		seelog.Errorf("Google Group member not found: GroupEmail[%s]", groupEmail)
+		explorer.FatalShutdown("Please re-run `-sync` if it's network issue or race condition. If it looks like auth issue please re-run `-auth google`")
 	}
 	seelog.Tracef("Loading flatten group members: GroupEmail[%s]", groupEmail)
 	for _, x := range m {

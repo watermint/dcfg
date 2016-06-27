@@ -85,12 +85,14 @@ func (d *Config) GoogleClientFile() string {
 func (d *Config) loadConfig(file string, label string, data interface{}) {
 	j, err := os.Open(file)
 	if err != nil {
-		explorer.Fatal("Unable to read file", label, file, err)
+		seelog.Errorf("Unable to read file: label[%s] file[%s] err[%s]", label, file, err)
+		explorer.FatalShutdown("Ensure file [%s] exist.", file)
 	}
 	defer j.Close()
 	err = json.NewDecoder(j).Decode(data)
 	if err != nil {
-		explorer.Fatal("Unable to parse file", label, file, err)
+		seelog.Errorf("Unable to parse file: label[%s] file[%s] err[%s]", label, file, err)
+		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format.", file)
 	}
 }
 
