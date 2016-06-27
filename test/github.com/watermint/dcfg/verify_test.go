@@ -2,8 +2,8 @@ package dcfg
 
 import (
 	"testing"
-	"dcfg/auth"
-	"dcfg/config"
+	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/config"
 )
 
 func init() {

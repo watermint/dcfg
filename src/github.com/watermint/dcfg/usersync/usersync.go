@@ -1,9 +1,9 @@
 package usersync
 
 import (
-	"dcfg/directory"
+	"github.com/watermint/dcfg/directory"
 	"github.com/cihub/seelog"
-	"dcfg/connector"
+	"github.com/watermint/dcfg/connector"
 )
 
 type UserSync struct {

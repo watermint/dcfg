@@ -5,7 +5,10 @@ go:
 
 install:
  - export GOPATH="${TRAVIS_BUILD_DIR}:$GOPATH"
- - go get -t -v ./...
+ - go get -u github.com/cihub/seelog
+ - go get -u github.com/dropbox/dropbox-sdk-go-unofficial
+ - go get -u google.golang.org/api/admin/directory/v1
+ - go get -u google.golang.org/cloud/compute/metadata
 
 script:
  - go test -v ./...

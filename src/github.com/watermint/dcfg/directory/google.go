@@ -2,8 +2,8 @@ package directory
 
 import (
 	"google.golang.org/api/admin/directory/v1"
-	"dcfg/auth"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
 )
 

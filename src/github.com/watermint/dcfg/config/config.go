@@ -3,7 +3,7 @@ package config
 import (
 	"path"
 	"encoding/json"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/explorer"
 	"os"
 	"runtime"
 	"github.com/cihub/seelog"

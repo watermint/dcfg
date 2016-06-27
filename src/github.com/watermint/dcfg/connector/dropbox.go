@@ -2,9 +2,9 @@ package connector
 
 import (
 	"fmt"
-	"dcfg/auth"
+	"github.com/watermint/dcfg/auth"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
 )
 

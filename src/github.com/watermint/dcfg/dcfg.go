@@ -1,19 +1,19 @@
 package main
 
 import (
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/explorer"
 
-	"dcfg/config"
-	"dcfg/directory"
-	"dcfg/groupsync"
-	"dcfg/usersync"
+	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/directory"
+	"github.com/watermint/dcfg/groupsync"
+	"github.com/watermint/dcfg/usersync"
 	"github.com/cihub/seelog"
 	"log"
 	"flag"
 	"fmt"
 	"os"
-	"dcfg/auth"
-	"dcfg/connector"
+	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/connector"
 	"strings"
 	"bufio"
 	"io"
@@ -36,6 +36,10 @@ const (
     	</outputs>
 	</seelog>
 	`
+)
+
+var (
+	AppVersion string
 )
 
 func replaceLogger(basePath string) {
@@ -207,16 +211,19 @@ func main() {
 	}
 
 	replaceLogger(*basePath)
-	defer seelog.Flush()
+
+	seelog.Info("dcfg version: ", AppVersion)
 
 	explorer.Start()
+	config.ReloadConfig(*basePath)
+	defer seelog.Flush()
+
 
 	syncOptions := SyncOptions{
 		GroupProvisionWhiteList: *groupProvisionWhiteList,
 		Domain: *domain,
 		DryRun: *dryRun,
 	}
-	config.ReloadConfig(*basePath)
 
 	if *authTarget != "" {
 		executeAuth(*authTarget, syncOptions.Domain)

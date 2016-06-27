@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
 )
 

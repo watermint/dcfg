@@ -2,8 +2,8 @@ package directory
 
 import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"dcfg/auth"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
 )
 

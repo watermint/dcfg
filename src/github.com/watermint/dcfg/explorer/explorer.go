@@ -62,6 +62,7 @@ func logEnv() {
 	}
 }
 
+
 func logSystem() {
 	if !startupSystemLog {
 		logOs()

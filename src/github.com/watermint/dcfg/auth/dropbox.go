@@ -2,8 +2,8 @@ package auth
 
 import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
-	"dcfg/config"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
 	"fmt"
 	"os"

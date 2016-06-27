@@ -1,10 +1,10 @@
 package groupsync
 
 import (
-	"dcfg/directory"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/directory"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
-	"dcfg/connector"
+	"github.com/watermint/dcfg/connector"
 )
 
 type GroupSync struct {

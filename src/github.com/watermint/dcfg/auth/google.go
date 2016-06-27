@@ -2,8 +2,8 @@ package auth
 
 import (
 	"io/ioutil"
-	"dcfg/config"
-	"dcfg/explorer"
+	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/explorer"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/admin/directory/v1"
 	"golang.org/x/oauth2"

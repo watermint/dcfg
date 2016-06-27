@@ -2,9 +2,9 @@ package dcfg
 
 import (
 	"testing"
-	"dcfg/groupsync"
-	"dcfg/connector"
-	"dcfg/directory"
+	"github.com/watermint/dcfg/groupsync"
+	"github.com/watermint/dcfg/connector"
+	"github.com/watermint/dcfg/directory"
 )
 
 func TestGroupSync1(t *testing.T) {
