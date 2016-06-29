@@ -67,6 +67,7 @@ func syncUserProvision(googleDirectory *directory.GoogleDirectory, dropboxDirect
 		DropboxConnector: *provisioning,
 		DropboxAccounts:  dropboxDirectory,
 		GoogleAccounts:   googleDirectory,
+		GoogleGroups:     googleDirectory,
 	}
 
 	seelog.Infof("Provisioning Users (Google Users -> Dropbox Users)")
@@ -77,6 +78,7 @@ func syncUserDeprovision(googleDirectory *directory.GoogleDirectory, dropboxDire
 		DropboxConnector: *provisioning,
 		DropboxAccounts:  dropboxDirectory,
 		GoogleAccounts:   googleDirectory,
+		GoogleGroups:     googleDirectory,
 	}
 
 	seelog.Infof("Deprovisioning Users (Google Users -> Dropbox Users)")
