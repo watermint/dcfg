@@ -14,6 +14,7 @@ type Account struct {
 type Group struct {
 	GroupId       string
 	GroupName     string
+	GroupEmail    string
 	Members       []Account
 	CorrelationId string
 }

@@ -241,9 +241,10 @@ func (g *GoogleDirectory) createAccounts() (accounts []Account) {
 func (g *GoogleDirectory) createGroups() (groups []Group) {
 	for _, x := range g.rawGroups {
 		group := Group{
-			GroupId:   x.Email,
-			GroupName: x.Name,
-			Members:   g.getFlattenGroupMembers(x.Email),
+			GroupId:    x.Email,
+			GroupEmail: x.Email,
+			GroupName:  x.Name,
+			Members:    g.getFlattenGroupMembers(x.Email),
 		}
 		groups = append(groups, group)
 	}

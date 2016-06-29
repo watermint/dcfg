@@ -36,6 +36,7 @@ func TestUserSyncRemoveUser(t *testing.T) {
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,
+		GoogleGroups:     &directory.GroupDirectoryMock{},
 	}
 	userSync.SyncDeprovision()
 
@@ -76,6 +77,7 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,
+		GoogleGroups:     &directory.GroupDirectoryMock{},
 	}
 	userSync.SyncDeprovision()
 
@@ -114,6 +116,7 @@ func TestUserSyncEqual(t *testing.T) {
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,
+		GoogleGroups:     &directory.GroupDirectoryMock{},
 	}
 	userSync.SyncDeprovision()
 
@@ -152,6 +155,55 @@ func TestUserSyncGoogleHasMore(t *testing.T) {
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,
+		GoogleGroups:     &directory.GroupDirectoryMock{},
+	}
+	userSync.SyncDeprovision()
+
+	unexpected, missing, success := provision.AssertLogs([]string{})
+	if !success {
+		t.Error("Sync failed", unexpected, missing, success)
+	}
+}
+
+func TestUserSyncExistInGroup(t *testing.T) {
+	provision := connector.DropboxConnectorMock{}
+	googleAccounts := directory.AccountDirectoryMock{
+		MockData: []directory.Account{
+			directory.Account{
+				Email: "a@example.com",
+			},
+			directory.Account{
+				Email: "b@example.com",
+			},
+		},
+	}
+	googleGroups := directory.GroupDirectoryMock{
+		MockData: []directory.Group{
+			directory.Group{
+				GroupId:    "c@example.com",
+				GroupEmail: "c@example.com",
+				GroupName:  "Group-C",
+			},
+		},
+	}
+	dropboxAccounts := directory.AccountDirectoryMock{
+		MockData: []directory.Account{
+			directory.Account{
+				Email: "a@example.com",
+			},
+			directory.Account{
+				Email: "b@example.com",
+			},
+			directory.Account{
+				Email: "c@example.com",
+			},
+		},
+	}
+	userSync := usersync.UserSync{
+		DropboxConnector: &provision,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
+		GoogleGroups:     &googleGroups,
 	}
 	userSync.SyncDeprovision()
 

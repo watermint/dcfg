@@ -10,12 +10,30 @@ type UserSync struct {
 	DropboxConnector connector.DropboxConnector
 	DropboxAccounts  directory.AccountDirectory
 	GoogleAccounts   directory.AccountDirectory
-	GoogleGroups     directory.AccountDirectory
+	GoogleGroups     directory.GroupDirectory
 }
 
 func (d *UserSync) membersNotInDirectory(member []directory.Account, ad directory.AccountDirectory) (notInDir []directory.Account) {
 	for _, x := range member {
 		if !directory.ExistInDirectory(ad, x) {
+			notInDir = append(notInDir, x)
+		}
+	}
+	return
+}
+
+func (d *UserSync) memberInGroups(needle directory.Account, haystack []directory.Group) bool {
+	for _, x := range haystack {
+		if needle.Email == x.GroupEmail {
+			return true
+		}
+	}
+	return false
+}
+
+func (d *UserSync) membersNotInGroup(member []directory.Account, gd directory.GroupDirectory) (notInDir []directory.Account) {
+	for _, x := range member {
+		if !d.memberInGroups(x, gd.Groups()) {
 			notInDir = append(notInDir, x)
 		}
 	}
@@ -30,9 +48,10 @@ func (d *UserSync) SyncDeprovision() {
 
 	dropboxMembers := d.DropboxAccounts.Accounts()
 	dropboxMembersNotInGoogle := d.membersNotInDirectory(dropboxMembers, d.GoogleAccounts)
+	dropboxMembersNotInGroup := d.membersNotInGroup(dropboxMembersNotInGoogle, d.GoogleGroups)
 
-	seelog.Tracef("Dropbox [%d] user(s) are not in Google", len(dropboxMembersNotInGoogle))
-	for _, x := range dropboxMembersNotInGoogle {
+	seelog.Tracef("Dropbox [%d] user(s) are not in Google", len(dropboxMembersNotInGroup))
+	for _, x := range dropboxMembersNotInGroup {
 		seelog.Tracef("Removing Dropbox User: Email[%s]", x.Email)
 		d.DropboxConnector.MembersRemove(x.Email)
 	}
