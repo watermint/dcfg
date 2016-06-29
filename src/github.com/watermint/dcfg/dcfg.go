@@ -3,20 +3,20 @@ package main
 import (
 	"github.com/watermint/dcfg/explorer"
 
+	"bufio"
+	"flag"
+	"fmt"
+	"github.com/cihub/seelog"
+	"github.com/watermint/dcfg/auth"
 	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
 	"github.com/watermint/dcfg/groupsync"
 	"github.com/watermint/dcfg/usersync"
-	"github.com/cihub/seelog"
-	"log"
-	"flag"
-	"fmt"
-	"os"
-	"github.com/watermint/dcfg/auth"
-	"github.com/watermint/dcfg/connector"
-	"strings"
-	"bufio"
 	"io"
+	"log"
+	"os"
+	"strings"
 )
 
 const (
@@ -65,8 +65,8 @@ func DirExists(path string) bool {
 func syncUserProvision(googleDirectory *directory.GoogleDirectory, dropboxDirectory *directory.DropboxDirectory, provisioning *connector.DropboxConnector, syncOptions SyncOptions) {
 	userSync := usersync.UserSync{
 		DropboxConnector: *provisioning,
-		DropboxAccounts: dropboxDirectory,
-		GoogleAccounts: googleDirectory,
+		DropboxAccounts:  dropboxDirectory,
+		GoogleAccounts:   googleDirectory,
 	}
 
 	seelog.Infof("Provisioning Users (Google Users -> Dropbox Users)")
@@ -75,8 +75,8 @@ func syncUserProvision(googleDirectory *directory.GoogleDirectory, dropboxDirect
 func syncUserDeprovision(googleDirectory *directory.GoogleDirectory, dropboxDirectory *directory.DropboxDirectory, provisioning *connector.DropboxConnector, syncOptions SyncOptions) {
 	userSync := usersync.UserSync{
 		DropboxConnector: *provisioning,
-		DropboxAccounts: dropboxDirectory,
-		GoogleAccounts: googleDirectory,
+		DropboxAccounts:  dropboxDirectory,
+		GoogleAccounts:   googleDirectory,
 	}
 
 	seelog.Infof("Deprovisioning Users (Google Users -> Dropbox Users)")
@@ -89,10 +89,10 @@ func syncGroupProvision(googleDirectory *directory.GoogleDirectory, dropboxDirec
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: *provisioning,
+		DropboxConnector:        *provisioning,
 		DropboxAccountDirectory: dropboxDirectory,
-		DropboxGroupDirectory: dropboxDirectory,
-		GoogleDirectory: googleDirectory,
+		DropboxGroupDirectory:   dropboxDirectory,
+		GoogleDirectory:         googleDirectory,
 	}
 
 	seelog.Infof("Syncing Group (Google Group -> Dropbox Group)")
@@ -124,7 +124,7 @@ func groupSyncGroupList(filePath string) (list []string) {
 	return
 }
 
-func loadDirectories(syncOptions SyncOptions) (*directory.GoogleDirectory, *directory.DropboxDirectory){
+func loadDirectories(syncOptions SyncOptions) (*directory.GoogleDirectory, *directory.DropboxDirectory) {
 	dropbox := directory.DropboxDirectory{}
 	google := directory.GoogleDirectory{
 		Domain: syncOptions.Domain,
@@ -179,8 +179,8 @@ func executeAuth(authMode string, domain string) {
 
 type SyncOptions struct {
 	GroupProvisionWhiteList string
-	Domain string
-	DryRun bool
+	Domain                  string
+	DryRun                  bool
 }
 
 func createDropboxConnector(dryRun bool) connector.DropboxConnector {
@@ -221,11 +221,10 @@ func main() {
 	config.ReloadConfig(*basePath)
 	defer seelog.Flush()
 
-
 	syncOptions := SyncOptions{
 		GroupProvisionWhiteList: *groupProvisionWhiteList,
-		Domain: *domain,
-		DryRun: *dryRun,
+		Domain:                  *domain,
+		DryRun:                  *dryRun,
 	}
 
 	if *authTarget != "" {

@@ -1,12 +1,11 @@
 package explorer
 
 import (
+	"fmt"
 	"github.com/cihub/seelog"
 	"os"
 	"runtime"
-	"fmt"
 )
-
 
 var (
 	startupSystemLog bool

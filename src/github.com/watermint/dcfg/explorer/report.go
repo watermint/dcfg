@@ -1,8 +1,8 @@
 package explorer
 
 import (
-	"github.com/cihub/seelog"
 	"fmt"
+	"github.com/cihub/seelog"
 )
 
 var (
@@ -33,12 +33,12 @@ func Report() {
 	} else {
 		if len(reportSuccess) > 0 {
 			for i, line := range reportSuccess {
-				reportLine("Success: [%d] %s", i + 1, line)
+				reportLine("Success: [%d] %s", i+1, line)
 			}
 		}
 		if len(reportFailure) > 0 {
 			for i, line := range reportFailure {
-				reportLine("Failure: [%d] %s", i + 1, line)
+				reportLine("Failure: [%d] %s", i+1, line)
 			}
 		}
 	}

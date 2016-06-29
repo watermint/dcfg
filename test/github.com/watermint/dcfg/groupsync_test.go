@@ -1,10 +1,10 @@
 package dcfg
 
 import (
-	"testing"
-	"github.com/watermint/dcfg/groupsync"
 	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
+	"github.com/watermint/dcfg/groupsync"
+	"testing"
 )
 
 func TestGroupSync1(t *testing.T) {
@@ -12,7 +12,7 @@ func TestGroupSync1(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -25,14 +25,14 @@ func TestGroupSync1(t *testing.T) {
 	dropboxGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1",
+				GroupId:   "g1",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
 						Email: "a@example.com",
 					},
 				},
-				CorrelationId:"g1@example.com",
+				CorrelationId: "g1@example.com",
 			},
 		},
 	}
@@ -51,10 +51,10 @@ func TestGroupSync1(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -69,7 +69,7 @@ func TestGroupSync2(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -82,7 +82,7 @@ func TestGroupSync2(t *testing.T) {
 	dropboxGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1",
+				GroupId:   "g1",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -92,7 +92,7 @@ func TestGroupSync2(t *testing.T) {
 						Email: "b@example.com",
 					},
 				},
-				CorrelationId:"g1@example.com",
+				CorrelationId: "g1@example.com",
 			},
 		},
 	}
@@ -110,10 +110,10 @@ func TestGroupSync2(t *testing.T) {
 		},
 	}
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -130,7 +130,7 @@ func TestGroupSync3(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -143,7 +143,7 @@ func TestGroupSync3(t *testing.T) {
 	dropboxGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1",
+				GroupId:   "g1",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -153,7 +153,7 @@ func TestGroupSync3(t *testing.T) {
 						Email: "b@example.com",
 					},
 				},
-				CorrelationId:"g1@example.com",
+				CorrelationId: "g1@example.com",
 			},
 		},
 	}
@@ -172,10 +172,10 @@ func TestGroupSync3(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -193,7 +193,7 @@ func TestGroupSync4(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -206,7 +206,7 @@ func TestGroupSync4(t *testing.T) {
 	dropboxGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1",
+				GroupId:   "g1",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -216,7 +216,7 @@ func TestGroupSync4(t *testing.T) {
 						Email: "b@example.com",
 					},
 				},
-				CorrelationId:"g1@example.com",
+				CorrelationId: "g1@example.com",
 			},
 		},
 	}
@@ -235,10 +235,10 @@ func TestGroupSync4(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -258,7 +258,7 @@ func TestGroupSync5(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -269,8 +269,7 @@ func TestGroupSync5(t *testing.T) {
 		},
 	}
 	dropboxGroups := directory.GroupDirectoryMock{
-		MockData: []directory.Group{
-		},
+		MockData: []directory.Group{},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
 		MockData: []directory.Account{
@@ -287,10 +286,10 @@ func TestGroupSync5(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -309,7 +308,7 @@ func TestGroupSync6(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
@@ -320,8 +319,7 @@ func TestGroupSync6(t *testing.T) {
 		},
 	}
 	dropboxGroups := directory.GroupDirectoryMock{
-		MockData: []directory.Group{
-		},
+		MockData: []directory.Group{},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
 		MockData: []directory.Account{
@@ -338,10 +336,10 @@ func TestGroupSync6(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -359,7 +357,7 @@ func TestGroupSync7(t *testing.T) {
 	googleGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1@example.com",
+				GroupId:   "g1@example.com",
 				GroupName: "G1-RENAME",
 				Members: []directory.Account{
 					directory.Account{
@@ -372,14 +370,14 @@ func TestGroupSync7(t *testing.T) {
 	dropboxGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1",
+				GroupId:   "g1",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
 						Email: "c@example.com",
 					},
 				},
-				CorrelationId:"g1@example.com",
+				CorrelationId: "g1@example.com",
 			},
 		},
 	}
@@ -398,10 +396,10 @@ func TestGroupSync7(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
@@ -417,20 +415,19 @@ func TestGroupSync7(t *testing.T) {
 func TestGroupSync8(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleGroups := directory.GroupDirectoryMock{
-		MockData: []directory.Group{
-		},
+		MockData: []directory.Group{},
 	}
 	dropboxGroups := directory.GroupDirectoryMock{
 		MockData: []directory.Group{
 			directory.Group{
-				GroupId: "g1",
+				GroupId:   "g1",
 				GroupName: "G1",
 				Members: []directory.Account{
 					directory.Account{
 						Email: "c@example.com",
 					},
 				},
-				CorrelationId:"g1@example.com",
+				CorrelationId: "g1@example.com",
 			},
 		},
 	}
@@ -449,18 +446,16 @@ func TestGroupSync8(t *testing.T) {
 	}
 
 	groupSync := groupsync.GroupSync{
-		DropboxConnector: &provision,
+		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
-		DropboxGroupDirectory: &dropboxGroups,
-		GoogleDirectory: &googleGroups,
+		DropboxGroupDirectory:   &dropboxGroups,
+		GoogleDirectory:         &googleGroups,
 	}
 
 	groupSync.Sync("g1@example.com")
 
-	unexpected, missing, success := provision.AssertLogs([]string{
-	})
+	unexpected, missing, success := provision.AssertLogs([]string{})
 	if !success {
 		t.Error("Sync failed", unexpected, missing, success)
 	}
 }
-

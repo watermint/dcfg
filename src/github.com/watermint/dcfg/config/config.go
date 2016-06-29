@@ -1,12 +1,12 @@
 package config
 
 import (
-	"path"
 	"encoding/json"
+	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/explorer"
 	"os"
+	"path"
 	"runtime"
-	"github.com/cihub/seelog"
 )
 
 type Config struct {
@@ -35,9 +35,9 @@ var (
 
 const (
 	googleTokenFileName = "google_token.json"
-	googleClientSecret = "google_client_secret.json"
-	dropboxTokenFile = "dropbox_token.json"
-	systemLog = "dcfg.log"
+	googleClientSecret  = "google_client_secret.json"
+	dropboxTokenFile    = "dropbox_token.json"
+	systemLog           = "dcfg.log"
 )
 
 func ReloadConfigForTest() {
@@ -54,7 +54,7 @@ func ReloadConfig(configPath string) {
 }
 
 func loadConfig(configPath string) {
-	Global = Config{configPath:configPath, google:GoogleConfig{}}
+	Global = Config{configPath: configPath, google: GoogleConfig{}}
 }
 
 // Path to system log

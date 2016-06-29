@@ -1,13 +1,13 @@
 package auth
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/watermint/dcfg/config"
 	"github.com/watermint/dcfg/explorer"
-	"github.com/cihub/seelog"
-	"fmt"
 	"os"
-	"encoding/json"
 )
 
 func verifyDropboxToken(token string) {

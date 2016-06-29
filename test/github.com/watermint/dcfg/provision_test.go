@@ -1,16 +1,16 @@
 package dcfg
 
 import (
-	"testing"
+	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
 	"github.com/watermint/dcfg/usersync"
-	"github.com/watermint/dcfg/connector"
+	"testing"
 )
 
 func TestUserSyncAddUser(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -20,7 +20,7 @@ func TestUserSyncAddUser(t *testing.T) {
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -34,13 +34,12 @@ func TestUserSyncAddUser(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncProvision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {
-	})
+	unexpected, missing, success := provision.AssertLogs([]string{})
 	if !success {
 		t.Error("Sync failed", unexpected, missing, success)
 	}
@@ -49,26 +48,26 @@ func TestUserSyncAddUser(t *testing.T) {
 func TestUserSyncAddUser2(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
-				Email: "a@example.com",
+				Email:     "a@example.com",
 				GivenName: "Given-A",
-				Surname: "Sur-A",
+				Surname:   "Sur-A",
 			},
 			directory.Account{
-				Email: "b@example.com",
+				Email:     "b@example.com",
 				GivenName: "Given-B",
-				Surname: "Sur-B",
+				Surname:   "Sur-B",
 			},
 			directory.Account{
-				Email: "c@example.com",
+				Email:     "c@example.com",
 				GivenName: "Given-C",
-				Surname: "Sur-C",
+				Surname:   "Sur-C",
 			},
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -79,12 +78,12 @@ func TestUserSyncAddUser2(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncProvision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {
+	unexpected, missing, success := provision.AssertLogs([]string{
 		provision.CreateOperationLog("MembersAdd", "c@example.com", "Given-C", "Sur-C"),
 	})
 	if !success {
@@ -95,26 +94,26 @@ func TestUserSyncAddUser2(t *testing.T) {
 func TestUserSyncAddUser3(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
-				Email: "a@example.com",
+				Email:     "a@example.com",
 				GivenName: "Given-A",
-				Surname: "Sur-A",
+				Surname:   "Sur-A",
 			},
 			directory.Account{
-				Email: "b@example.com",
+				Email:     "b@example.com",
 				GivenName: "Given-B",
-				Surname: "Sur-B",
+				Surname:   "Sur-B",
 			},
 			directory.Account{
-				Email: "c@example.com",
+				Email:     "c@example.com",
 				GivenName: "Given-C",
-				Surname: "Sur-C",
+				Surname:   "Sur-C",
 			},
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -125,12 +124,12 @@ func TestUserSyncAddUser3(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncProvision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {
+	unexpected, missing, success := provision.AssertLogs([]string{
 		provision.CreateOperationLog("MembersAdd", "b@example.com", "Given-B", "Sur-B"),
 		provision.CreateOperationLog("MembersAdd", "c@example.com", "Given-C", "Sur-C"),
 	})

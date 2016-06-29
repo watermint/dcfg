@@ -1,8 +1,8 @@
 package dcfg
 
 import (
-	"testing"
 	"github.com/watermint/dcfg/config"
+	"testing"
 )
 
 func init() {

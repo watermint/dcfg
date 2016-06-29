@@ -2,10 +2,10 @@ package connector
 
 import (
 	"fmt"
-	"github.com/watermint/dcfg/auth"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
+	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/explorer"
 )
 
 type DropboxConnector interface {
@@ -88,14 +88,14 @@ type DropboxConnectorImpl struct {
 
 func (dps *DropboxConnectorImpl) createGroupSelector(groupId string) (sel *team.GroupSelector) {
 	return &team.GroupSelector{
-		Tag: "group_id",
+		Tag:     "group_id",
 		GroupId: groupId,
 	}
 }
 
 func (dps *DropboxConnectorImpl) createUserSelectArg(accountEmail string) *team.UserSelectorArg {
 	return &team.UserSelectorArg{
-		Tag: "email",
+		Tag:   "email",
 		Email: accountEmail,
 	}
 }
@@ -112,7 +112,7 @@ func (dps *DropboxConnectorImpl) createMemberAccess(accountEmail string) *team.M
 func (dps *DropboxConnectorImpl) GroupsCreate(groupName, groupExternalId string) string {
 	client := auth.DropboxClient()
 	a := team.GroupCreateArg{
-		GroupName: groupName,
+		GroupName:       groupName,
 		GroupExternalId: groupExternalId,
 	}
 	g, err := client.GroupsCreate(&a)
@@ -131,7 +131,7 @@ func (dps *DropboxConnectorImpl) GroupsUpdate(groupId, newGroupName string) {
 	client := auth.DropboxClient()
 
 	a := &team.GroupUpdateArgs{
-		Group: dps.createGroupSelector(groupId),
+		Group:        dps.createGroupSelector(groupId),
 		NewGroupName: newGroupName,
 	}
 	g, err := client.GroupsUpdate(a)
@@ -149,7 +149,7 @@ func (dps *DropboxConnectorImpl) GroupsMembersAdd(groupId, accountEmail string) 
 
 	m := []*team.MemberAccess{dps.createMemberAccess(accountEmail)}
 	a := &team.GroupMembersAddArg{
-		Group: dps.createGroupSelector(groupId),
+		Group:   dps.createGroupSelector(groupId),
 		Members: m,
 	}
 	r, err := client.GroupsMembersAdd(a)
@@ -204,8 +204,8 @@ func (dps *DropboxConnectorImpl) MembersRemove(email string) {
 	}
 
 	a := team.MembersRemoveArg{
-		User:dps.createUserSelectArg(email),
-		WipeData:false,
+		User:     dps.createUserSelectArg(email),
+		WipeData: false,
 	}
 	r, err := client.MembersRemove(&a)
 	if err != nil {
@@ -223,10 +223,10 @@ func (dps *DropboxConnectorImpl) MembersAdd(email, givenName, surname string) {
 	a := team.MembersAddArg{
 		NewMembers: []*team.MemberAddArg{
 			&team.MemberAddArg{
-				MemberEmail: email,
+				MemberEmail:     email,
 				MemberGivenName: givenName,
-				MemberSurname: surname,
-				Role: &team.AdminTier{Tag:"member_only"},
+				MemberSurname:   surname,
+				Role:            &team.AdminTier{Tag: "member_only"},
 			},
 		},
 	}

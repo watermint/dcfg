@@ -1,16 +1,16 @@
 package dcfg
 
 import (
-	"testing"
+	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
 	"github.com/watermint/dcfg/usersync"
-	"github.com/watermint/dcfg/connector"
+	"testing"
 )
 
 func TestUserSyncRemoveUser(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -20,7 +20,7 @@ func TestUserSyncRemoveUser(t *testing.T) {
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -34,12 +34,12 @@ func TestUserSyncRemoveUser(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncDeprovision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {
+	unexpected, missing, success := provision.AssertLogs([]string{
 		provision.CreateOperationLog("MembersRemove", "c@example.com"),
 	})
 	if !success {
@@ -50,7 +50,7 @@ func TestUserSyncRemoveUser(t *testing.T) {
 func TestUserSyncRemoveUser2(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -60,7 +60,7 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -74,12 +74,12 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncDeprovision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {
+	unexpected, missing, success := provision.AssertLogs([]string{
 		provision.CreateOperationLog("MembersRemove", "c@example.com"),
 		provision.CreateOperationLog("MembersRemove", "d@example.com"),
 	})
@@ -91,7 +91,7 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 func TestUserSyncEqual(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -101,7 +101,7 @@ func TestUserSyncEqual(t *testing.T) {
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -112,12 +112,12 @@ func TestUserSyncEqual(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncDeprovision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {})
+	unexpected, missing, success := provision.AssertLogs([]string{})
 	if !success {
 		t.Error("Sync failed", unexpected, missing, success)
 	}
@@ -126,7 +126,7 @@ func TestUserSyncEqual(t *testing.T) {
 func TestUserSyncGoogleHasMore(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
 	googleAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -139,7 +139,7 @@ func TestUserSyncGoogleHasMore(t *testing.T) {
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData:[]directory.Account{
+		MockData: []directory.Account{
 			directory.Account{
 				Email: "a@example.com",
 			},
@@ -150,12 +150,12 @@ func TestUserSyncGoogleHasMore(t *testing.T) {
 	}
 	userSync := usersync.UserSync{
 		DropboxConnector: &provision,
-		DropboxAccounts: &dropboxAccounts,
-		GoogleAccounts: &googleAccounts,
+		DropboxAccounts:  &dropboxAccounts,
+		GoogleAccounts:   &googleAccounts,
 	}
 	userSync.SyncDeprovision()
 
-	unexpected, missing, success := provision.AssertLogs([]string {})
+	unexpected, missing, success := provision.AssertLogs([]string{})
 	if !success {
 		t.Error("Sync failed", unexpected, missing, success)
 	}

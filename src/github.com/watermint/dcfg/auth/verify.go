@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"github.com/watermint/dcfg/explorer"
 	"github.com/cihub/seelog"
+	"github.com/watermint/dcfg/explorer"
 )
 
 // Verify Dropbox connection. Exit the program if connection failure.

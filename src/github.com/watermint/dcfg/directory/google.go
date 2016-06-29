@@ -1,15 +1,15 @@
 package directory
 
 import (
-	"google.golang.org/api/admin/directory/v1"
+	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/auth"
 	"github.com/watermint/dcfg/explorer"
-	"github.com/cihub/seelog"
+	"google.golang.org/api/admin/directory/v1"
 )
 
 type GoogleDirectory struct {
 	// Parameter
-	Domain          string
+	Domain string
 
 	// API raw data structure
 	rawUsers        []*admin.User
@@ -17,8 +17,8 @@ type GoogleDirectory struct {
 	rawGroupMembers map[string][]*admin.Member
 
 	// Abstract data structure
-	groups          []Group
-	accounts        []Account
+	groups   []Group
+	accounts []Account
 }
 
 const (
@@ -151,9 +151,9 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 	seelog.Tracef("Google Customer Member loaded (chunk): %d", len(r.Users))
 	for _, x := range r.Users {
 		members = g.appendMember(members, Account{
-			Email:x.PrimaryEmail,
-			GivenName:x.Name.GivenName,
-			Surname:x.Name.FamilyName,
+			Email:     x.PrimaryEmail,
+			GivenName: x.Name.GivenName,
+			Surname:   x.Name.FamilyName,
 		})
 	}
 	token := r.NextPageToken
@@ -167,9 +167,9 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 		seelog.Tracef("Google Customer Member loaded (chunk): %d", len(r.Users))
 		for _, x := range r.Users {
 			members = g.appendMember(members, Account{
-				Email:x.PrimaryEmail,
-				GivenName:x.Name.GivenName,
-				Surname:x.Name.FamilyName,
+				Email:     x.PrimaryEmail,
+				GivenName: x.Name.GivenName,
+				Surname:   x.Name.FamilyName,
 			})
 		}
 		token = r.NextPageToken
@@ -230,9 +230,9 @@ func (g *GoogleDirectory) Load() {
 func (g *GoogleDirectory) createAccounts() (accounts []Account) {
 	for _, u := range g.rawUsers {
 		accounts = g.appendMember(accounts, Account{
-			Email: u.PrimaryEmail,
+			Email:     u.PrimaryEmail,
 			GivenName: u.Name.GivenName,
-			Surname: u.Name.FamilyName,
+			Surname:   u.Name.FamilyName,
 		})
 	}
 	return
@@ -241,9 +241,9 @@ func (g *GoogleDirectory) createAccounts() (accounts []Account) {
 func (g *GoogleDirectory) createGroups() (groups []Group) {
 	for _, x := range g.rawGroups {
 		group := Group{
-			GroupId: x.Email,
+			GroupId:   x.Email,
 			GroupName: x.Name,
-			Members: g.getFlattenGroupMembers(x.Email),
+			Members:   g.getFlattenGroupMembers(x.Email),
 		}
 		groups = append(groups, group)
 	}

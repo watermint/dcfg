@@ -1,10 +1,10 @@
 package directory
 
 import (
+	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
 	"github.com/watermint/dcfg/auth"
 	"github.com/watermint/dcfg/explorer"
-	"github.com/cihub/seelog"
 )
 
 type DropboxDirectory struct {
@@ -14,8 +14,8 @@ type DropboxDirectory struct {
 	rawGroupFullInfo  map[string]*team.GroupFullInfo
 
 	// Abstract data structure
-	groups            []Group
-	accounts          []Account
+	groups   []Group
+	accounts []Account
 }
 
 const (
@@ -139,9 +139,9 @@ func (d *DropboxDirectory) Load() {
 func (d *DropboxDirectory) createAccounts() (members []Account) {
 	for _, m := range d.rawMembers {
 		members = append(members, Account{
-			Email: m.Profile.Email,
+			Email:     m.Profile.Email,
 			GivenName: m.Profile.Name.GivenName,
-			Surname: m.Profile.Name.Surname,
+			Surname:   m.Profile.Name.Surname,
 		})
 	}
 	return
@@ -152,16 +152,16 @@ func (d *DropboxDirectory) createGroups() (groups []Group) {
 		members := []Account{}
 		for _, m := range g.Members {
 			members = append(members, Account{
-				Email: m.Profile.Email,
+				Email:     m.Profile.Email,
 				GivenName: m.Profile.Name.GivenName,
-				Surname: m.Profile.Name.Surname,
+				Surname:   m.Profile.Name.Surname,
 			})
 		}
 		group := Group{
-			GroupId: gid,
-			GroupName: g.GroupName,
+			GroupId:       gid,
+			GroupName:     g.GroupName,
 			CorrelationId: g.GroupExternalId,
-			Members: members,
+			Members:       members,
 		}
 		groups = append(groups, group)
 	}

@@ -1,17 +1,17 @@
 package auth
 
 import (
-	"io/ioutil"
-	"github.com/watermint/dcfg/config"
-	"github.com/watermint/dcfg/explorer"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/admin/directory/v1"
-	"golang.org/x/oauth2"
-	"golang.org/x/net/context"
 	"encoding/json"
-	"os"
 	"fmt"
 	"github.com/cihub/seelog"
+	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/explorer"
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/admin/directory/v1"
+	"io/ioutil"
+	"os"
 )
 
 func googleConfig() *oauth2.Config {
