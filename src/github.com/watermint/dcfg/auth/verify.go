@@ -70,4 +70,5 @@ func verifyNetwork(host string) {
 		explorer.FatalShutdown("Please check you network configuration to host [%s]", host)
 	}
 	seelog.Tracef("Verification finished without error: host[%s]", host)
+	seelog.Infof("Network test: Success: %s", host)
 }

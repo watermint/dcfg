@@ -86,7 +86,10 @@ func DropboxClient() dropbox.Api {
 }
 
 func AuthDropbox() {
+	verifyNetwork("https://www.dropbox.com")
 	verifyNetwork("https://api.dropboxapi.com")
+	verifyNetwork("https://content.dropboxapi.com")
+	verifyNetwork("https://notify.dropboxapi.com")
 
 	seelog.Info("Start authentication sequence for Dropbox")
 	updateDropboxToken()
