@@ -127,8 +127,6 @@ func UpdateGoogleToken(domain string) {
 }
 
 func AuthGoogle(domain string) {
-	verifyNetwork("https://www.googleapis.com")
-
 	seelog.Info("Start authentication sequence for Google Apps")
 	UpdateGoogleToken(domain)
 }
