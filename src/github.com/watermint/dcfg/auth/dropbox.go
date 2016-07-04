@@ -14,6 +14,8 @@ import (
 )
 
 func verifyDropboxToken(token string) {
+	verifyNetworkWithoutFail("https://api.dropboxapi.com")
+
 	verboseOutput := bytes.NewBufferString("Verbose")
 	log.SetOutput(verboseOutput)
 	client := dropboxClientFromToken(token, true)
