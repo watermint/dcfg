@@ -54,17 +54,17 @@ func updateDropboxToken() {
 
 	j, err := os.Create(config.Global.DropboxTokenFile())
 	if err != nil {
-		seelog.Errorf("Unable to open Dropbox token file: file[%s] err[%s]", config.Global.GoogleTokenFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] exist and readable", config.Global.GoogleTokenFile())
+		seelog.Errorf("Unable to open Dropbox token file: file[%s] err[%s]", config.Global.DropboxTokenFile(), err)
+		explorer.FatalShutdown("Ensure file [%s] exist and readable", config.Global.DropboxTokenFile())
 	}
 	defer j.Close()
 
 	err = json.NewEncoder(j).Encode(content)
 	if err != nil {
-		seelog.Errorf("Unable to write Dropbox token file", config.Global.GoogleTokenFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format.", config.Global.GoogleTokenFile())
+		seelog.Errorf("Unable to write Dropbox token file", config.Global.DropboxTokenFile(), err)
+		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format.", config.Global.DropboxTokenFile())
 	}
-	explorer.ReportSuccess("Dropbox Token file updated: [%s]", config.Global.GoogleTokenFile())
+	explorer.ReportSuccess("Dropbox Token file updated: [%s]", config.Global.DropboxTokenFile())
 
 }
 

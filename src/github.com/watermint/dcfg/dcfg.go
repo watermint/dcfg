@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/watermint/dcfg/explorer"
-
 	"bufio"
 	"flag"
 	"fmt"
@@ -11,6 +9,7 @@ import (
 	"github.com/watermint/dcfg/config"
 	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
+	"github.com/watermint/dcfg/explorer"
 	"github.com/watermint/dcfg/groupsync"
 	"github.com/watermint/dcfg/usersync"
 	"io"
