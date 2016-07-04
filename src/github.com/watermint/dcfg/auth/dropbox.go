@@ -14,8 +14,6 @@ import (
 )
 
 func verifyDropboxToken(token string) {
-	verifyNetworkWithoutFail("https://api.dropboxapi.com")
-
 	verboseOutput := bytes.NewBufferString("Verbose")
 	log.SetOutput(verboseOutput)
 	client := dropboxClientFromToken(token, true)
@@ -88,6 +86,8 @@ func DropboxClient() dropbox.Api {
 }
 
 func AuthDropbox() {
+	verifyNetwork("https://api.dropboxapi.com")
+
 	seelog.Info("Start authentication sequence for Dropbox")
 	updateDropboxToken()
 }

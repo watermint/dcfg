@@ -92,8 +92,6 @@ func getGoogleTokenFromWeb() *oauth2.Token {
 }
 
 func verifyGoogleToken(token *oauth2.Token, domain string) {
-	verifyNetworkWithoutFail("https://www.googleapis.com")
-
 	client := googleClientByToken(token)
 	_, err := client.Groups.List().Domain(domain).Do()
 	if err != nil {
@@ -129,6 +127,8 @@ func UpdateGoogleToken(domain string) {
 }
 
 func AuthGoogle(domain string) {
+	verifyNetwork("https://www.googleapis.com")
+
 	seelog.Info("Start authentication sequence for Google Apps")
 	UpdateGoogleToken(domain)
 }
