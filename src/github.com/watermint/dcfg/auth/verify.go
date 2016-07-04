@@ -44,6 +44,7 @@ func VerifyGoogle(domain string) {
 func verifyNetworkWithoutFail(host string) {
 	seelog.Tracef("Verifying network reachability to [%s]", host)
 	resp, err := http.Get(host)
+	defer resp.Body.Close()
 
 	seelog.Tracef("Status code: %d", resp.StatusCode)
 	seelog.Tracef("Status: %s", resp.Status)
