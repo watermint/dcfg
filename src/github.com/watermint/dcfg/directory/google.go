@@ -19,7 +19,7 @@ type GoogleDirectory struct {
 }
 
 const (
-	googleLoadChunkSize = 100
+	googleLoadChunkSize = 200
 )
 
 func (g *GoogleDirectory) Group(groupId string) (Group, bool) {
