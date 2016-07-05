@@ -14,6 +14,10 @@ import (
 	"os"
 )
 
+const (
+	GOOGLE_CUSTOMER_ID = "my_customer"
+)
+
 func googleConfig() *oauth2.Config {
 	json, err := ioutil.ReadFile(config.Global.GoogleClientFile())
 	if err != nil {
@@ -91,25 +95,25 @@ func getGoogleTokenFromWeb() *oauth2.Token {
 	return tok
 }
 
-func verifyGoogleToken(token *oauth2.Token, domain string) {
+func verifyGoogleToken(token *oauth2.Token) {
 	client := googleClientByToken(token)
-	_, err := client.Groups.List().Domain(domain).Do()
+	_, err := client.Groups.List().Customer(GOOGLE_CUSTOMER_ID).Do()
 	if err != nil {
-		seelog.Errorf("Authentication failed. domain[%s] err[%s]", domain, err)
+		seelog.Errorf("Authentication failed. err[%s]", err)
 		explorer.FatalShutdown("Please re-run `-auth google` sequence")
 	}
-	_, err = client.Users.List().Domain(domain).Do()
+	_, err = client.Users.List().Customer(GOOGLE_CUSTOMER_ID).Do()
 	if err != nil {
-		seelog.Errorf("Authentication failed. domain[%s] err[%s]", domain, err)
+		seelog.Errorf("Authentication failed. err[%s]", err)
 		explorer.FatalShutdown("Please re-run `-auth google` sequence")
 	}
 	explorer.ReportSuccess("Verified token for Google Apps")
 }
 
-func UpdateGoogleToken(domain string) {
+func UpdateGoogleToken() {
 	token := getGoogleTokenFromWeb()
 
-	verifyGoogleToken(token, domain)
+	verifyGoogleToken(token)
 
 	j, err := os.Create(config.Global.GoogleTokenFile())
 	if err != nil {
@@ -126,7 +130,7 @@ func UpdateGoogleToken(domain string) {
 	explorer.ReportSuccess("Google Token file updated: [%s]", config.Global.GoogleTokenFile())
 }
 
-func AuthGoogle(domain string) {
+func AuthGoogle() {
 	seelog.Info("Start authentication sequence for Google Apps")
-	UpdateGoogleToken(domain)
+	UpdateGoogleToken()
 }

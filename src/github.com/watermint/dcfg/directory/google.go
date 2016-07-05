@@ -8,9 +8,6 @@ import (
 )
 
 type GoogleDirectory struct {
-	// Parameter
-	Domain string
-
 	// API raw data structure
 	rawUsers        []*admin.User
 
@@ -71,9 +68,9 @@ func (g *GoogleDirectory) loadUsers() {
 	g.rawUsers = []*admin.User{}
 	client := auth.GoogleClient()
 
-	seelog.Tracef("Loading Google Users of domain[%s]", g.Domain)
+	seelog.Tracef("Loading Google Users")
 
-	users, err := client.Users.List().MaxResults(googleLoadChunkSize).Domain(g.Domain).Do()
+	users, err := client.Users.List().MaxResults(googleLoadChunkSize).Customer(auth.GOOGLE_CUSTOMER_ID).Do()
 	if err != nil {
 		seelog.Errorf("Unable to load Google Users: Err[%v]", err)
 		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
@@ -85,7 +82,7 @@ func (g *GoogleDirectory) loadUsers() {
 	token := users.NextPageToken
 	for token != "" {
 		seelog.Trace("Loading Google Users (with token)")
-		users, err := client.Users.List().MaxResults(googleLoadChunkSize).PageToken(token).Domain(g.Domain).Do()
+		users, err := client.Users.List().MaxResults(googleLoadChunkSize).PageToken(token).Customer(auth.GOOGLE_CUSTOMER_ID).Do()
 		if err != nil {
 			seelog.Errorf("Unable to load Google Users: Err[%v]", err)
 			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
@@ -101,11 +98,11 @@ func (g *GoogleDirectory) loadUsers() {
 func (g *GoogleDirectory) loadGroup(groupId string) (*admin.Group, bool) {
 	client := auth.GoogleClient()
 
-	seelog.Tracef("Loading Google Groups of domain[%s]", g.Domain)
+	seelog.Tracef("Loading Google Groups: GroupId[%s]", groupId)
 
 	rawGroup, err := client.Groups.Get(groupId).Do()
 	if err != nil {
-		seelog.Errorf("Unable to load Google Group: err[%v]", err)
+		seelog.Tracef("Unable to load Google Group: err[%v]", err)
 		return nil, false
 	}
 	seelog.Tracef("Google Group Loaded: GroupKey[%s] GroupEmail[%s] GroupEtag[%s]", groupId, rawGroup.Email, rawGroup.Etag)

@@ -127,9 +127,7 @@ func groupSyncGroupList(filePath string) (list []string) {
 
 func loadDirectories(syncOptions SyncOptions) (*directory.GoogleDirectory, *directory.DropboxDirectory) {
 	dropbox := directory.DropboxDirectory{}
-	google := directory.GoogleDirectory{
-		Domain: syncOptions.Domain,
-	}
+	google := directory.GoogleDirectory{}
 	dropbox.Load()
 	google.Load()
 
@@ -160,12 +158,12 @@ func usage() {
 	seelog.Flush()
 }
 
-func executeAuth(authMode string, domain string) {
+func executeAuth(authMode string) {
 	switch authMode {
 	case "google":
 		defer explorer.Report()
 		seelog.Trace("Google: Authorisation sequence")
-		auth.AuthGoogle(domain)
+		auth.AuthGoogle()
 
 	case "dropbox":
 		defer explorer.Report()
@@ -180,7 +178,6 @@ func executeAuth(authMode string, domain string) {
 
 type SyncOptions struct {
 	GroupProvisionWhiteList string
-	Domain                  string
 	DryRun                  bool
 }
 
@@ -197,7 +194,6 @@ func main() {
 	authTarget := flag.String("auth", "", "Store API token. Choose target API provider (google/dropbox)")
 	syncTarget := flag.String("sync", "", "Sync mode. Separate by comma if want to use multiple mode. (user-provision/user-deprovision/group-provision)")
 	basePath := flag.String("path", "", "Path for config/log files.")
-	domain := flag.String("domain", "", "Target domain name of Google Apps")
 	dryRun := flag.Bool("dryrun", true, "Dry run")
 	proxy := flag.String("proxy", "", "Proxy hostname:port")
 	groupProvisionWhiteList := flag.String("group-provision-list", "", "White list file for group-provision")
@@ -232,12 +228,11 @@ func main() {
 
 	syncOptions := SyncOptions{
 		GroupProvisionWhiteList: *groupProvisionWhiteList,
-		Domain:                  *domain,
 		DryRun:                  *dryRun,
 	}
 
 	if *authTarget != "" {
-		executeAuth(*authTarget, syncOptions.Domain)
+		executeAuth(*authTarget)
 	} else if *syncTarget != "" {
 
 		defer explorer.Report()
