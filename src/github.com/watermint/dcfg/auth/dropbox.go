@@ -1,15 +1,15 @@
 package auth
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/watermint/dcfg/config"
 	"github.com/watermint/dcfg/explorer"
-	"os"
 	"log"
-	"bytes"
+	"os"
 	"strings"
 )
 

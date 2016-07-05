@@ -9,7 +9,7 @@ import (
 
 type GoogleDirectory struct {
 	// API raw data structure
-	rawUsers        []*admin.User
+	rawUsers []*admin.User
 
 	// Abstract data structure
 	accounts []Account
@@ -190,7 +190,7 @@ func (g *GoogleDirectory) getFlattenMember(member *admin.Member, parentGroupKey 
 		seelog.Tracef("Google Group: Loading Group: Nest[%d] Parent[%s], ChildGroupEmail[%s]", nest, parentGroupKey, member.Email)
 		childMembers := g.loadRawGroupMembers(member.Email, parentGroupKey)
 		for _, x := range childMembers {
-			y := g.getFlattenMember(x, member.Email, nest + 1)
+			y := g.getFlattenMember(x, member.Email, nest+1)
 			for _, z := range y {
 				members = g.appendMember(members, z)
 			}

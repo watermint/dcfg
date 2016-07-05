@@ -3,10 +3,10 @@ package explorer
 import (
 	"fmt"
 	"github.com/cihub/seelog"
-	"os"
-	"runtime"
 	"net/http"
 	"net/http/httputil"
+	"os"
+	"runtime"
 	"strings"
 )
 

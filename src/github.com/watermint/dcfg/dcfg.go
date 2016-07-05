@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"github.com/cihub/seelog"
@@ -11,13 +10,11 @@ import (
 	"github.com/watermint/dcfg/directory"
 	"github.com/watermint/dcfg/explorer"
 	"github.com/watermint/dcfg/groupsync"
+	"github.com/watermint/dcfg/text"
 	"github.com/watermint/dcfg/usersync"
-	"io"
 	"log"
 	"os"
 	"strings"
-	"bytes"
-	"unicode/utf16"
 )
 
 const (
@@ -41,11 +38,6 @@ const (
 
 var (
 	AppVersion string
-	BOM_UTF8 = []byte{0xef, 0xbb, 0xbf}
-	BOM_UTF16BE = []byte{0xfe, 0xff}
-	BOM_UTF16LE = []byte{0xff, 0xfe}
-	BOM_UTF32BE = []byte{0x00, 0x00, 0xfe, 0xff}
-	BOM_UTF32LE = []byte{0xff, 0xfe, 0x00, 0x00}
 )
 
 func replaceLogger(basePath string) {
@@ -104,48 +96,14 @@ func syncGroupProvision(googleDirectory *directory.GoogleDirectory, dropboxDirec
 	}
 
 	seelog.Infof("Syncing Group (Google Group -> Dropbox Group)")
-	for _, x := range groupSyncGroupList(syncOptions.GroupProvisionWhiteList) {
+	whiteList, err := text.ReadLines(syncOptions.GroupProvisionWhiteList)
+	if err != nil {
+		seelog.Errorf("Unable to load Google Group white list: file[%s]", syncOptions.GroupProvisionWhiteList)
+		explorer.FatalShutdown("Ensure file exist and readable: file[%s]", syncOptions.GroupProvisionWhiteList)
+	}
+	for _, x := range whiteList {
 		groupSync.Sync(x)
 	}
-}
-
-func trimBom(seq []byte) string {
-	if bytes.HasPrefix(seq, BOM_UTF8) {
-		return string(bytes.TrimPrefix(seq, BOM_UTF8))
-	}
-	if bytes.HasPrefix(seq, BOM_UTF16BE) {
-		seqWithoutBom := bytes.TrimPrefix(seq, BOM_UTF16BE)
-		utf16Seq := make([]uint16, len(seqWithoutBom) / 2)
-		for i := range utf16Seq {
-			utf16Seq[i] = uint16(seqWithoutBom[2 * i + 1] << 8) | uint16(seqWithoutBom[2 * i])
-		}
-		return string(utf16.Decode(utf16Seq))
-	}
-	return string(seq)
-}
-
-func groupSyncGroupList(filePath string) (list []string) {
-	f, err := os.Open(filePath)
-	if err != nil {
-		seelog.Errorf("Unable to load Group Sync white list file: file[%s] err[%s]", filePath, err)
-		explorer.FatalShutdown("Ensure file [%s] exist and readable", filePath)
-	}
-	defer f.Close()
-	r := bufio.NewReader(f)
-	for {
-		lineRaw, _, err := r.ReadLine()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			seelog.Errorf("Unable to load Group Sync white list file. Error during loading file: file[%s] err[%s]", filePath, err)
-			explorer.FatalShutdown("Ensure file [%s] is appropriate format and encoding")
-		}
-		line := strings.TrimSpace(trimBom(lineRaw))
-		if line != "" {
-			list = append(list, line)
-		}
-	}
-	return
 }
 
 func loadDirectories(syncOptions SyncOptions) (*directory.GoogleDirectory, *directory.DropboxDirectory) {
