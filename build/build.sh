@@ -1,20 +1,12 @@
+#!/bin/sh
 
-export TARGET_OS="windows darwin linux"
-BUILD=`pwd`/out
-DIST=/dist
-APP_VERSION=`cat version`
-echo building: $APP_VERSION
-echo UID: `id`
+if [ x"$#" != x"1" ]; then
+  echo $0 destination_path
+  exit 0
+fi
 
-for t in $TARGET_OS; do
-  mkdir -p "$BUILD/$t";
-done
+DIST=$1
 
-for t in $TARGET_OS; do
-  echo Building: $t
-  GOOS=$t GOARCH=amd64 go build -ldflags "-X main.AppVersion=`cat version`" -o "$BUILD/$t/dcfg" github.com/watermint/dcfg
-done
+rm -fr "$DIST"
+docker build -t dcfg . && docker run -v "$DIST":/dist:rw --rm dcfg
 
-mv $BUILD/windows/dcfg $BUILD/windows/dcfg.exe # workaround
-cd $BUILD
-zip -9 -r $DIST/dcfg-$APP_VERSION.zip .

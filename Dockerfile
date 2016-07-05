@@ -14,4 +14,4 @@ RUN go get -u google.golang.org/api/admin/directory/v1
 RUN go get -u google.golang.org/cloud/compute/metadata
 
 ADD . $GOPATH
-ENTRYPOINT $GOPATH/build/build.sh
+ENTRYPOINT $GOPATH/build/build_inside_docker.sh
