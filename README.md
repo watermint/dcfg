@@ -59,7 +59,7 @@ If IT admin add `japan@example.com` to the white list, DCFG creates Dropbox Grou
 
 ## Authorise and store token of Google Apps
 
-1. `dcfg -path *DCFG directory* -auth google - *domain name of your Google App*`
+1. `dcfg -path *DCFG directory* -auth google 
 2. Open link, which displayed by above command.
 3. Approve and copy code.
 4. Paste code into dcfg
@@ -94,7 +94,7 @@ singapore@example.com
 DCFG runs as dryrun by default. If you don't need to sync groups, `-group-provision-list *white list file*` is not required.
 
 ```
-dcfg -path *DCFG directory* -domain *Domain name of your Google App* -group-provision-list *white list file* -sync user-provision,group-provision,user-deprovision
+dcfg -path *DCFG directory* -group-provision-list *white list file* -sync user-provision,group-provision,user-deprovision
 ```
 
 ## Run

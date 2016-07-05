@@ -27,7 +27,7 @@ func (g *GoogleDirectory) Group(groupId string) (Group, bool) {
 		return Group{}, false
 	}
 	seelog.Tracef("Loading Google Group Member: GroupId[%s]", groupId)
-	rawGroupMembers := g.loadRawGroupMembers(rawGroup.Email)
+	rawGroupMembers := g.loadRawGroupMembers(rawGroup.Email, rawGroup.Email)
 
 	return g.createGroupFromRaw(rawGroup, rawGroupMembers), true
 }
@@ -35,7 +35,7 @@ func (g *GoogleDirectory) Group(groupId string) (Group, bool) {
 func (g *GoogleDirectory) createGroupFromRaw(rawGroup *admin.Group, rawMembers []*admin.Member) Group {
 	members := []Account{}
 	for _, x := range rawMembers {
-		for _, y := range g.getFlattenMember(x) {
+		for _, y := range g.getFlattenMember(x, rawGroup.Email, 0) {
 			members = g.appendMember(members, y)
 		}
 	}
@@ -95,22 +95,22 @@ func (g *GoogleDirectory) loadUsers() {
 	}
 }
 
-func (g *GoogleDirectory) loadGroup(groupId string) (*admin.Group, bool) {
+func (g *GoogleDirectory) loadGroup(groupKey string) (*admin.Group, bool) {
 	client := auth.GoogleClient()
 
-	seelog.Tracef("Loading Google Groups: GroupId[%s]", groupId)
+	seelog.Tracef("Loading Google Groups: GroupKey[%s]", groupKey)
 
-	rawGroup, err := client.Groups.Get(groupId).Do()
+	rawGroup, err := client.Groups.Get(groupKey).Do()
 	if err != nil {
 		seelog.Tracef("Unable to load Google Group: err[%v]", err)
 		return nil, false
 	}
-	seelog.Tracef("Google Group Loaded: GroupKey[%s] GroupEmail[%s] GroupEtag[%s]", groupId, rawGroup.Email, rawGroup.Etag)
+	seelog.Tracef("Google Group Loaded: GroupKey[%s] GroupEmail[%s] GroupEtag[%s]", groupKey, rawGroup.Email, rawGroup.Etag)
 	return rawGroup, true
 }
 
-func (g *GoogleDirectory) loadRawGroupMembers(groupKey string) (members []*admin.Member) {
-	seelog.Tracef("Loading members of Google Group: GroupKey[%s]", groupKey)
+func (g *GoogleDirectory) loadRawGroupMembers(groupKey, parentGroupKey string) (members []*admin.Member) {
+	seelog.Tracef("Loading members of Google Group: ParentKey[%s] GroupKey[%s]", parentGroupKey, groupKey)
 	client := auth.GoogleClient()
 
 	m, err := client.Members.List(groupKey).MaxResults(googleLoadChunkSize).Do()
@@ -118,19 +118,18 @@ func (g *GoogleDirectory) loadRawGroupMembers(groupKey string) (members []*admin
 		seelog.Errorf("Unable to load Google Group Member: err[%s]", err)
 		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 	}
-	seelog.Tracef("Google Members of Group loaded (chunk): %d member(s)", len(m.Members))
+	seelog.Tracef("Google Members of Group loaded: ParentKey[%s] GroupKey[%s]: %d member(s)", parentGroupKey, groupKey, len(m.Members))
 	for _, x := range m.Members {
 		members = append(members, x)
 	}
 	token := m.NextPageToken
 	for token != "" {
-		seelog.Trace("Loading Google Group Member (with token)")
 		m, err := client.Members.List(groupKey).MaxResults(googleLoadChunkSize).PageToken(token).Do()
 		if err != nil {
 			seelog.Errorf("Unable to load Google Group member (with token): Err[%s]", err)
 			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
 		}
-		seelog.Tracef("Google Members of Group loaded (chunk): %d member(s)", len(m.Members))
+		seelog.Tracef("Google Members of Group loaded: ParentKey[%s]/GroupKey[%s]: %d member(s)", parentGroupKey, groupKey, len(m.Members))
 		for _, x := range m.Members {
 			members = append(members, x)
 		}
@@ -178,26 +177,26 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 	return
 }
 
-func (g *GoogleDirectory) getFlattenMember(member *admin.Member) (members []Account) {
+func (g *GoogleDirectory) getFlattenMember(member *admin.Member, parentGroupKey string, nest int) (members []Account) {
 	switch member.Type {
 	case "USER":
-		seelog.Tracef("Google Group: Loading user: UserEmail[%s]", member.Email)
+		seelog.Tracef("Google Group: Loading user: Nest[%d] Parent[%s] UserEmail[%s]", nest, parentGroupKey, member.Email)
 
 		//TODO: Fetch name for user-provision (for future enhancement like filter by group)
 		members = g.appendMember(members, Account{
 			Email: member.Email,
 		})
 	case "GROUP":
-		seelog.Tracef("Google Group: Loading group: ChildGroupEmail[%s]", member.Email)
-		childMembers := g.loadRawGroupMembers(member.Email)
+		seelog.Tracef("Google Group: Loading Group: Nest[%d] Parent[%s], ChildGroupEmail[%s]", nest, parentGroupKey, member.Email)
+		childMembers := g.loadRawGroupMembers(member.Email, parentGroupKey)
 		for _, x := range childMembers {
-			y := g.getFlattenMember(x)
+			y := g.getFlattenMember(x, member.Email, nest + 1)
 			for _, z := range y {
 				members = g.appendMember(members, z)
 			}
 		}
 	case "CUSTOMER":
-		seelog.Tracef("Google Group: Loading Customer: Customer[%s]", member.Id)
+		seelog.Tracef("Google Group: Loading Customer: Nest[%d] Parent[%s] Customer[%s]", nest, parentGroupKey, member.Id)
 		for _, y := range g.loadCustomerMembers(member.Id) {
 			members = g.appendMember(members, y)
 		}

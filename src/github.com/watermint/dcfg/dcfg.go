@@ -16,6 +16,8 @@ import (
 	"log"
 	"os"
 	"strings"
+	"bytes"
+	"unicode/utf16"
 )
 
 const (
@@ -27,7 +29,7 @@ const (
 	</formats>
 	<outputs formatid="detail">
     		<filter levels="trace,info,warn,error,critical">
-        		<rollingfile formatid="detail" filename="%s/dcfg.log" type="size" maxsize="10485760" maxrolls="7" />
+        		<rollingfile formatid="detail" filename="%s/dcfg.log" type="size" maxsize="52428800" maxrolls="7" />
     		</filter>
 		<filter levels="info,warn,error,critical">
         		<console formatid="short" />
@@ -39,6 +41,11 @@ const (
 
 var (
 	AppVersion string
+	BOM_UTF8 = []byte{0xef, 0xbb, 0xbf}
+	BOM_UTF16BE = []byte{0xfe, 0xff}
+	BOM_UTF16LE = []byte{0xff, 0xfe}
+	BOM_UTF32BE = []byte{0x00, 0x00, 0xfe, 0xff}
+	BOM_UTF32LE = []byte{0xff, 0xfe, 0x00, 0x00}
 )
 
 func replaceLogger(basePath string) {
@@ -101,6 +108,22 @@ func syncGroupProvision(googleDirectory *directory.GoogleDirectory, dropboxDirec
 		groupSync.Sync(x)
 	}
 }
+
+func trimBom(seq []byte) string {
+	if bytes.HasPrefix(seq, BOM_UTF8) {
+		return string(bytes.TrimPrefix(seq, BOM_UTF8))
+	}
+	if bytes.HasPrefix(seq, BOM_UTF16BE) {
+		seqWithoutBom := bytes.TrimPrefix(seq, BOM_UTF16BE)
+		utf16Seq := make([]uint16, len(seqWithoutBom) / 2)
+		for i := range utf16Seq {
+			utf16Seq[i] = uint16(seqWithoutBom[2 * i + 1] << 8) | uint16(seqWithoutBom[2 * i])
+		}
+		return string(utf16.Decode(utf16Seq))
+	}
+	return string(seq)
+}
+
 func groupSyncGroupList(filePath string) (list []string) {
 	f, err := os.Open(filePath)
 	if err != nil {
@@ -117,7 +140,7 @@ func groupSyncGroupList(filePath string) (list []string) {
 			seelog.Errorf("Unable to load Group Sync white list file. Error during loading file: file[%s] err[%s]", filePath, err)
 			explorer.FatalShutdown("Ensure file [%s] is appropriate format and encoding")
 		}
-		line := strings.TrimSpace(string(lineRaw))
+		line := strings.TrimSpace(trimBom(lineRaw))
 		if line != "" {
 			list = append(list, line)
 		}
