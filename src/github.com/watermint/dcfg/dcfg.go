@@ -199,6 +199,7 @@ func main() {
 	basePath := flag.String("path", "", "Path for config/log files.")
 	domain := flag.String("domain", "", "Target domain name of Google Apps")
 	dryRun := flag.Bool("dryrun", true, "Dry run")
+	proxy := flag.String("proxy", "", "Proxy hostname:port")
 	groupProvisionWhiteList := flag.String("group-provision-list", "", "White list file for group-provision")
 
 	flag.Parse()
@@ -217,6 +218,13 @@ func main() {
 	replaceLogger(*basePath)
 
 	seelog.Info("dcfg version: ", AppVersion)
+
+	if *proxy != "" {
+		seelog.Tracef("Explicit proxy configuration: HTTP_PROXY [%s]", *proxy)
+		seelog.Tracef("Explicit proxy configuration: HTTPS_PROXY [%s]", *proxy)
+		os.Setenv("HTTP_PROXY", *proxy)
+		os.Setenv("HTTPS_PROXY", *proxy)
+	}
 
 	explorer.Start()
 	config.ReloadConfig(*basePath)
