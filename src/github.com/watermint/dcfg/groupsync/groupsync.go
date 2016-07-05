@@ -11,7 +11,7 @@ type GroupSync struct {
 	DropboxConnector        connector.DropboxConnector
 	DropboxAccountDirectory directory.AccountDirectory
 	DropboxGroupDirectory   directory.GroupDirectory
-	GoogleDirectory         directory.GroupDirectory
+	GoogleDirectory         directory.GroupResolver
 }
 
 func (g *GroupSync) onDropboxGroupNotFound(googleGroup directory.Group) {

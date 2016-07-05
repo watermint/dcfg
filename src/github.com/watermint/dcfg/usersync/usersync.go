@@ -10,7 +10,7 @@ type UserSync struct {
 	DropboxConnector connector.DropboxConnector
 	DropboxAccounts  directory.AccountDirectory
 	GoogleAccounts   directory.AccountDirectory
-	GoogleGroups     directory.GroupDirectory
+	GoogleGroups     directory.GroupResolver
 }
 
 func (d *UserSync) membersNotInDirectory(member []directory.Account, ad directory.AccountDirectory) (notInDir []directory.Account) {
@@ -31,9 +31,10 @@ func (d *UserSync) memberInGroups(needle directory.Account, haystack []directory
 	return false
 }
 
-func (d *UserSync) membersNotInGroup(member []directory.Account, gd directory.GroupDirectory) (notInDir []directory.Account) {
+func (d *UserSync) membersNotInGroup(member []directory.Account, gd directory.GroupResolver) (notInDir []directory.Account) {
 	for _, x := range member {
-		if !d.memberInGroups(x, gd.Groups()) {
+		_, exist := gd.Group(x.Email)
+		if !exist {
 			notInDir = append(notInDir, x)
 		}
 	}

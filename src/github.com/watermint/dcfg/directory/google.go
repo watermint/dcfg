@@ -13,17 +13,45 @@ type GoogleDirectory struct {
 
 	// API raw data structure
 	rawUsers        []*admin.User
-	rawGroups       []*admin.Group
-	rawGroupMembers map[string][]*admin.Member
 
 	// Abstract data structure
-	groups   []Group
 	accounts []Account
 }
 
 const (
 	googleLoadChunkSize = 100
 )
+
+func (g *GoogleDirectory) Group(groupId string) (Group, bool) {
+	seelog.Tracef("Loading Google Group: GroupId[%s]", groupId)
+	rawGroup, exist := g.loadGroup(groupId)
+	if !exist {
+		seelog.Tracef("Group not found for GroupId[%s]", groupId)
+		return Group{}, false
+	}
+	seelog.Tracef("Loading Google Group Member: GroupId[%s]", groupId)
+	rawGroupMembers := g.loadRawGroupMembers(rawGroup.Email)
+
+	return g.createGroupFromRaw(rawGroup, rawGroupMembers), true
+}
+
+func (g *GoogleDirectory) createGroupFromRaw(rawGroup *admin.Group, rawMembers []*admin.Member) Group {
+	members := []Account{}
+	for _, x := range rawMembers {
+		for _, y := range g.getFlattenMember(x) {
+			members = g.appendMember(members, y)
+		}
+	}
+
+	group := Group{
+		GroupId:    rawGroup.Email,
+		GroupEmail: rawGroup.Email,
+		GroupName:  rawGroup.Name,
+		Members:    members,
+	}
+
+	return group
+}
 
 func (g *GoogleDirectory) appendMember(members []Account, member Account) []Account {
 	found := false
@@ -70,42 +98,25 @@ func (g *GoogleDirectory) loadUsers() {
 	}
 }
 
-func (g *GoogleDirectory) loadGroup() {
-	g.rawGroups = []*admin.Group{}
+func (g *GoogleDirectory) loadGroup(groupId string) (*admin.Group, bool) {
 	client := auth.GoogleClient()
 
 	seelog.Tracef("Loading Google Groups of domain[%s]", g.Domain)
 
-	groups, err := client.Groups.List().MaxResults(googleLoadChunkSize).Domain(g.Domain).Do()
+	rawGroup, err := client.Groups.Get(groupId).Do()
 	if err != nil {
 		seelog.Errorf("Unable to load Google Group: err[%v]", err)
-		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
+		return nil, false
 	}
-	seelog.Tracef("Google Group Loaded (chunk): %d", len(groups.Groups))
-	for _, x := range groups.Groups {
-		g.rawGroups = append(g.rawGroups, x)
-	}
-	token := groups.NextPageToken
-	for token != "" {
-		seelog.Trace("Loading Google Groups (with token)")
-		groups, err := client.Groups.List().MaxResults(googleLoadChunkSize).Domain(g.Domain).PageToken(token).Do()
-		if err != nil {
-			seelog.Errorf("Unable to load Google Group (with token): token[%s] err[%s]", token, err)
-			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
-		}
-		seelog.Tracef("Google Group Loaded (chunk): %d", len(groups.Groups))
-		for _, x := range groups.Groups {
-			g.rawGroups = append(g.rawGroups, x)
-		}
-		token = groups.NextPageToken
-	}
+	seelog.Tracef("Google Group Loaded: GroupKey[%s] GroupEmail[%s] GroupEtag[%s]", groupId, rawGroup.Email, rawGroup.Etag)
+	return rawGroup, true
 }
 
-func (g *GoogleDirectory) loadMembers(group *admin.Group) (members []*admin.Member) {
-	seelog.Tracef("Loading members of Google Group: GroupId[%s] GroupEmail[%s]", group.Id, group.Email)
+func (g *GoogleDirectory) loadRawGroupMembers(groupKey string) (members []*admin.Member) {
+	seelog.Tracef("Loading members of Google Group: GroupKey[%s]", groupKey)
 	client := auth.GoogleClient()
 
-	m, err := client.Members.List(group.Id).MaxResults(googleLoadChunkSize).Do()
+	m, err := client.Members.List(groupKey).MaxResults(googleLoadChunkSize).Do()
 	if err != nil {
 		seelog.Errorf("Unable to load Google Group Member: err[%s]", err)
 		explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
@@ -117,7 +128,7 @@ func (g *GoogleDirectory) loadMembers(group *admin.Group) (members []*admin.Memb
 	token := m.NextPageToken
 	for token != "" {
 		seelog.Trace("Loading Google Group Member (with token)")
-		m, err := client.Members.List(group.Id).MaxResults(googleLoadChunkSize).PageToken(token).Do()
+		m, err := client.Members.List(groupKey).MaxResults(googleLoadChunkSize).PageToken(token).Do()
 		if err != nil {
 			seelog.Errorf("Unable to load Google Group member (with token): Err[%s]", err)
 			explorer.FatalShutdown("Please re-run `-sync` if it's network issue. If it looks like auth issue please re-run `-auth google`")
@@ -129,13 +140,6 @@ func (g *GoogleDirectory) loadMembers(group *admin.Group) (members []*admin.Memb
 		token = m.NextPageToken
 	}
 	return
-}
-
-func (g *GoogleDirectory) loadGroupMembers() {
-	g.rawGroupMembers = make(map[string][]*admin.Member)
-	for _, x := range g.rawGroups {
-		g.rawGroupMembers[x.Email] = g.loadMembers(x)
-	}
 }
 
 func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Account) {
@@ -188,8 +192,12 @@ func (g *GoogleDirectory) getFlattenMember(member *admin.Member) (members []Acco
 		})
 	case "GROUP":
 		seelog.Tracef("Google Group: Loading group: ChildGroupEmail[%s]", member.Email)
-		for _, y := range g.getFlattenGroupMembers(member.Email) {
-			members = g.appendMember(members, y)
+		childMembers := g.loadRawGroupMembers(member.Email)
+		for _, x := range childMembers {
+			y := g.getFlattenMember(x)
+			for _, z := range y {
+				members = g.appendMember(members, z)
+			}
 		}
 	case "CUSTOMER":
 		seelog.Tracef("Google Group: Loading Customer: Customer[%s]", member.Id)
@@ -203,29 +211,10 @@ func (g *GoogleDirectory) getFlattenMember(member *admin.Member) (members []Acco
 	return
 }
 
-func (g *GoogleDirectory) getFlattenGroupMembers(groupEmail string) (members []Account) {
-	m, exist := g.rawGroupMembers[groupEmail]
-
-	if !exist {
-		seelog.Tracef("Google Group member not found: GroupEmail[%s]", groupEmail)
-		return
-	}
-	seelog.Tracef("Loading flatten group members: GroupEmail[%s]", groupEmail)
-	for _, x := range m {
-		for _, y := range g.getFlattenMember(x) {
-			members = g.appendMember(members, y)
-		}
-	}
-	return
-}
-
 func (g *GoogleDirectory) Load() {
 	g.loadUsers()
-	g.loadGroup()
-	g.loadGroupMembers()
 
 	g.accounts = g.createAccounts()
-	g.groups = g.createGroups()
 }
 
 func (g *GoogleDirectory) createAccounts() (accounts []Account) {
@@ -237,23 +226,6 @@ func (g *GoogleDirectory) createAccounts() (accounts []Account) {
 		})
 	}
 	return
-}
-
-func (g *GoogleDirectory) createGroups() (groups []Group) {
-	for _, x := range g.rawGroups {
-		group := Group{
-			GroupId:    x.Email,
-			GroupEmail: x.Email,
-			GroupName:  x.Name,
-			Members:    g.getFlattenGroupMembers(x.Email),
-		}
-		groups = append(groups, group)
-	}
-	return
-}
-
-func (g *GoogleDirectory) Groups() []Group {
-	return g.groups
 }
 
 func (g *GoogleDirectory) Accounts() []Account {

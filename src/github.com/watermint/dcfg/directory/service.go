@@ -24,6 +24,10 @@ type GroupDirectory interface {
 	Groups() []Group
 }
 
+type GroupResolver interface {
+	Group(groupId string) (Group, bool)
+}
+
 func ExistInDirectory(ad AccountDirectory, account Account) bool {
 	for _, x := range ad.Accounts() {
 		if account.Email == x.Email {
@@ -51,13 +55,8 @@ func FindByCorrelationId(gd GroupDirectory, correlationId string) (Group, bool) 
 	return Group{}, false
 }
 
-func FindByGroupId(gd GroupDirectory, groupId string) (Group, bool) {
-	for _, x := range gd.Groups() {
-		if x.GroupId == groupId {
-			return x, true
-		}
-	}
-	return Group{}, false
+func FindByGroupId(gd GroupResolver, groupId string) (Group, bool) {
+	return gd.Group(groupId)
 }
 
 type AccountDirectoryMock struct {
@@ -80,4 +79,13 @@ func (gdm *GroupDirectoryMock) Load() {
 
 func (gdm *GroupDirectoryMock) Groups() []Group {
 	return gdm.MockData
+}
+
+func (gdm *GroupDirectoryMock) Group(groupId string) (Group, bool) {
+	for _, x := range gdm.MockData {
+		if x.GroupId == groupId || x.GroupEmail == groupId {
+			return x, true
+		}
+	}
+	return Group{}, false
 }
