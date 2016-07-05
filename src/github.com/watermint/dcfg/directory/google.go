@@ -205,9 +205,10 @@ func (g *GoogleDirectory) getFlattenMember(member *admin.Member) (members []Acco
 
 func (g *GoogleDirectory) getFlattenGroupMembers(groupEmail string) (members []Account) {
 	m, exist := g.rawGroupMembers[groupEmail]
+
 	if !exist {
-		seelog.Errorf("Google Group member not found: GroupEmail[%s]", groupEmail)
-		explorer.FatalShutdown("Please re-run `-sync` if it's network issue or race condition. If it looks like auth issue please re-run `-auth google`")
+		seelog.Tracef("Google Group member not found: GroupEmail[%s]", groupEmail)
+		return
 	}
 	seelog.Tracef("Loading flatten group members: GroupEmail[%s]", groupEmail)
 	for _, x := range m {
