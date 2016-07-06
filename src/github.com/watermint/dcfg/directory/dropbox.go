@@ -3,11 +3,13 @@ package directory
 import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/explorer"
 )
 
 type DropboxDirectory struct {
+	ExecutionContext cli.ExecutionContext
+
 	// API raw data structure
 	rawMembers        []*team.TeamMemberInfo
 	rawGroupSummaries []*team.GroupSummary
@@ -24,7 +26,7 @@ const (
 
 func (d *DropboxDirectory) loadMembers() {
 	d.rawMembers = []*team.TeamMemberInfo{}
-	client := auth.DropboxClient()
+	client := d.ExecutionContext.DropboxClient
 
 	seelog.Trace("Loading Dropbox Team Member Info")
 
@@ -66,7 +68,7 @@ func (d *DropboxDirectory) loadMembers() {
 }
 
 func (d *DropboxDirectory) loadGroupSummaries() {
-	client := auth.DropboxClient()
+	client := d.ExecutionContext.DropboxClient
 
 	seelog.Trace("Loading Dropbox Group Summaries")
 
@@ -106,7 +108,7 @@ func (d *DropboxDirectory) loadGroupSummaries() {
 
 func (d *DropboxDirectory) loadGroups() {
 	groups := make(map[string]*team.GroupFullInfo)
-	client := auth.DropboxClient()
+	client := d.ExecutionContext.DropboxClient
 
 	for i, gs := range d.rawGroupSummaries {
 		sel := team.GroupsSelector{}

@@ -2,6 +2,7 @@ package usersync
 
 import (
 	"github.com/cihub/seelog"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
 )
@@ -11,6 +12,18 @@ type UserSync struct {
 	DropboxAccounts  directory.AccountDirectory
 	GoogleAccounts   directory.AccountDirectory
 	GoogleGroups     directory.GroupResolver
+}
+
+func NewUserSync(context cli.ExecutionContext) UserSync {
+	gd := directory.GoogleDirectory{ExecutionContext: context}
+	dd := directory.DropboxDirectory{ExecutionContext: context}
+	dp := connector.CreateConnector(context)
+	return UserSync{
+		DropboxConnector: dp,
+		DropboxAccounts:  &dd,
+		GoogleAccounts:   &gd,
+		GoogleGroups:     &gd,
+	}
 }
 
 func (d *UserSync) membersNotInDirectory(member []directory.Account, ad directory.AccountDirectory) (notInDir []directory.Account) {

@@ -1,76 +1,22 @@
 package auth
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/explorer"
-	"golang.org/x/net/context"
+	"github.com/watermint/dcfg/file"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/admin/directory/v1"
-	"io/ioutil"
-	"os"
 )
 
 const (
 	GOOGLE_CUSTOMER_ID = "my_customer"
 )
 
-func googleConfig() *oauth2.Config {
-	json, err := ioutil.ReadFile(config.Global.GoogleClientFile())
-	if err != nil {
-		seelog.Errorf("Unable to read Google client file: file[%s] err[%s]", config.Global.GoogleClientFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] exist and readable", config.Global.GoogleClientFile())
-	}
-
-	c, err := google.ConfigFromJSON(json,
-		admin.AdminDirectoryUserReadonlyScope,
-		admin.AdminDirectoryGroupReadonlyScope)
-
-	if err != nil {
-		seelog.Errorf("Unable to parse Google client file: file[%s] err[%s]", config.Global.GoogleClientFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format.", config.Global.GoogleClientFile())
-	}
-
-	return c
-}
-
-func googleClientByToken(token *oauth2.Token) *admin.Service {
-	cfg := googleConfig()
-	context := context.Background()
-	client := cfg.Client(context, token)
-	service, err := admin.New(client)
-	if err != nil {
-		seelog.Errorf("Unable to create Google client: err[%s]", err)
-		explorer.FatalShutdown("Ensure Google API token available to use.")
-	}
-
-	return service
-}
-
-func GoogleClient() *admin.Service {
-	j, err := os.Open(config.Global.GoogleTokenFile())
-	if err != nil {
-		seelog.Errorf("Unable to read Google token file", config.Global.GoogleTokenFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] exist and readable", config.Global.GoogleTokenFile())
-	}
-	defer j.Close()
-
-	token := &oauth2.Token{}
-	err = json.NewDecoder(j).Decode(token)
-	if err != nil {
-		seelog.Errorf("Unable to parse Google token file", config.Global.GoogleTokenFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format", config.Global.GoogleTokenFile())
-	}
-	return googleClientByToken(token)
-}
-
-func getGoogleTokenFromWeb() *oauth2.Token {
+func getGoogleTokenFromWeb(context cli.ExecutionContext) *oauth2.Token {
 	seelog.Flush()
 
-	config := googleConfig()
+	config := context.GoogleClientConfig
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	fmt.Println("Go to the following link in your browser then type the authorization code:")
 	fmt.Println("")
@@ -95,9 +41,13 @@ func getGoogleTokenFromWeb() *oauth2.Token {
 	return tok
 }
 
-func verifyGoogleToken(token *oauth2.Token) {
-	client := googleClientByToken(token)
-	_, err := client.Groups.List().Customer(GOOGLE_CUSTOMER_ID).Do()
+func verifyGoogleToken(context cli.ExecutionContext, token *oauth2.Token) {
+	client, err := context.CreateGoogleClientByToken(token)
+	if err != nil {
+		seelog.Errorf("Authentication failed. err[%s]", err)
+		explorer.FatalShutdown("Please re-run `-auth google` sequence")
+	}
+	_, err = client.Groups.List().Customer(GOOGLE_CUSTOMER_ID).Do()
 	if err != nil {
 		seelog.Errorf("Authentication failed. err[%s]", err)
 		explorer.FatalShutdown("Please re-run `-auth google` sequence")
@@ -110,27 +60,18 @@ func verifyGoogleToken(token *oauth2.Token) {
 	explorer.ReportSuccess("Verified token for Google Apps")
 }
 
-func UpdateGoogleToken() {
-	token := getGoogleTokenFromWeb()
+func UpdateGoogleToken(context cli.ExecutionContext) {
+	path := context.Options.PathGoogleToken()
+	token := getGoogleTokenFromWeb(context)
+	verifyGoogleToken(context, token)
 
-	verifyGoogleToken(token)
-
-	j, err := os.Create(config.Global.GoogleTokenFile())
-	if err != nil {
-		seelog.Errorf("Unable to open Google token file: file[%s] err[%s]", config.Global.GoogleTokenFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] exist and readable", config.Global.GoogleTokenFile())
+	if err := file.SaveJSON(path, token); err != nil {
+		seelog.Errorf("Unable to write Google token file: file[%s] err[%s]", path, err)
+		explorer.FatalShutdown("Cannot update Google token file: file[%s]", path)
 	}
-	defer j.Close()
-
-	err = json.NewEncoder(j).Encode(token)
-	if err != nil {
-		seelog.Errorf("Unable to write Google token file: file[%s] err[%s]", config.Global.GoogleTokenFile(), err)
-		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format", config.Global.GoogleTokenFile())
-	}
-	explorer.ReportSuccess("Google Token file updated: [%s]", config.Global.GoogleTokenFile())
 }
 
-func AuthGoogle() {
+func AuthGoogle(context cli.ExecutionContext) {
 	seelog.Info("Start authentication sequence for Google Apps")
-	UpdateGoogleToken()
+	UpdateGoogleToken(context)
 }

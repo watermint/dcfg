@@ -2,21 +2,19 @@ package auth
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/dropbox/dropbox-sdk-go-unofficial"
-	"github.com/watermint/dcfg/config"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/explorer"
+	"github.com/watermint/dcfg/file"
 	"log"
-	"os"
 	"strings"
 )
 
-func verifyDropboxToken(token string) {
+func verifyDropboxToken(context cli.ExecutionContext, token string) {
 	verboseOutput := bytes.NewBufferString("Verbose")
 	log.SetOutput(verboseOutput)
-	client := dropboxClientFromToken(token, true)
+	client := context.CreateDropboxClientByToken(token)
 	team, err := client.GetInfo()
 
 	verboseLog := verboseOutput.String()
@@ -27,13 +25,9 @@ func verifyDropboxToken(token string) {
 
 	if err != nil {
 		seelog.Errorf("Authentication failed [%s]", err)
-		explorer.FatalShutdown("Please regenerate Dropbox Business API token, then update token file [%s]", config.Global.DropboxTokenFile())
+		explorer.FatalShutdown("Please regenerate Dropbox Business API token, then update token file")
 	}
 	explorer.ReportSuccess("Verified token for Dropbox Team: TeamId[%s] TeamName[%s] Provisioned[%d] Num Licenses[%d]", team.TeamId, team.Name, team.NumProvisionedUsers, team.NumLicensedUsers)
-}
-
-func dropboxClientFromToken(token string, verbose bool) dropbox.Api {
-	return dropbox.Client(token, dropbox.Options{Verbose: verbose})
 }
 
 func getDropboxTokenFromConsole() string {
@@ -55,37 +49,20 @@ func getDropboxTokenFromConsole() string {
 	return code
 }
 
-func updateDropboxToken() {
+func updateDropboxToken(context cli.ExecutionContext) {
 	token := getDropboxTokenFromConsole()
-	path := config.Global.DropboxTokenFile()
+	path := context.Options.PathDropboxToken()
 
-	verifyDropboxToken(token)
-
-	content := config.DropboxToken{
-		TeamManagementToken: token,
-	}
-
-	j, err := os.Create(path)
-	if err != nil {
-		seelog.Errorf("Unable to open Dropbox token file: file[%s] err[%s]", path, err)
-		explorer.FatalShutdown("Ensure file [%s] exist and readable", path)
-	}
-	defer j.Close()
-
-	err = json.NewEncoder(j).Encode(content)
+	verifyDropboxToken(context, token)
+	err := file.SaveJSON(path, token)
 	if err != nil {
 		seelog.Errorf("Unable to write Dropbox token file", path, err)
 		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format.", path)
 	}
 	explorer.ReportSuccess("Dropbox Token file updated: [%s]", path)
-
 }
 
-func DropboxClient() dropbox.Api {
-	return dropboxClientFromToken(config.Global.DropboxToken().TeamManagementToken, false)
-}
-
-func AuthDropbox() {
+func AuthDropbox(context cli.ExecutionContext) {
 	seelog.Info("Start authentication sequence for Dropbox")
-	updateDropboxToken()
+	updateDropboxToken(context)
 }

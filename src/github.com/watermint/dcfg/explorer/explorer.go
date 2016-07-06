@@ -3,6 +3,8 @@ package explorer
 import (
 	"fmt"
 	"github.com/cihub/seelog"
+	"github.com/watermint/dcfg/cli"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -14,26 +16,33 @@ var (
 	startupSystemLog bool
 )
 
-func formatValues(values ...interface{}) string {
-	line := ""
-	for i, v := range values {
-		if i != 0 {
-			line += ": "
-		}
-		switch v.(type) {
-		case int:
-			line += fmt.Sprintf("%d", v)
-		case uint32:
-			line += fmt.Sprintf("%d", v)
-		default:
-			line += fmt.Sprintf("%s", v)
-		}
-	}
-	return line
-}
+const (
+	seeLogXmlTemplate = `
+	<seelog type="adaptive" mininterval="200000000" maxinterval="1000000000" critmsgcount="5">
+	<formats>
+    		<format id="detail" format="date:%%Date(2006-01-02T15:04:05Z07:00)%%tloc:%%File:%%FuncShort:%%Line%%tlevel:%%Level%%tmsg:%%Msg%%n" />
+    		<format id="short" format="%%Time [%%LEV] %%Msg%%n" />
+	</formats>
+	<outputs formatid="detail">
+    		<filter levels="trace,info,warn,error,critical">
+        		<rollingfile formatid="detail" filename="%s/dcfg.log" type="size" maxsize="52428800" maxrolls="7" />
+    		</filter>
+		<filter levels="info,warn,error,critical">
+        		<console formatid="short" />
+    		</filter>
+    	</outputs>
+	</seelog>
+	`
+)
 
-func formatLine(level string, values ...interface{}) string {
-	return formatValues(values...)
+func replaceLogger(basePath string, appVersion string) {
+	seeLogXml := fmt.Sprintf(seeLogXmlTemplate, basePath)
+	logger, err := seelog.LoggerFromConfigAsString(seeLogXml)
+	if err != nil {
+		log.Fatalln("Failed to load logger", err.Error())
+	}
+	seelog.ReplaceLogger(logger)
+	seelog.Info("dcfg version: ", appVersion)
 }
 
 func FatalShutdown(suggestedWorkaround string, values ...interface{}) {
@@ -117,7 +126,9 @@ func logNetwork() {
 }
 
 // Start the explorer
-func Start() {
+func Start(options cli.Options, appVersion string) {
+	replaceLogger(options.BasePath, appVersion)
 	logSystem()
+	options.UpdateEnv()
 	logNetwork()
 }

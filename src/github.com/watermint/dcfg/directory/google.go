@@ -3,11 +3,14 @@ package directory
 import (
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/auth"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/explorer"
 	"google.golang.org/api/admin/directory/v1"
 )
 
 type GoogleDirectory struct {
+	ExecutionContext cli.ExecutionContext
+
 	// API raw data structure
 	rawUsers []*admin.User
 
@@ -66,7 +69,7 @@ func (g *GoogleDirectory) appendMember(members []Account, member Account) []Acco
 
 func (g *GoogleDirectory) loadUsers() {
 	g.rawUsers = []*admin.User{}
-	client := auth.GoogleClient()
+	client := g.ExecutionContext.GoogleClient
 
 	seelog.Tracef("Loading Google Users")
 
@@ -96,7 +99,7 @@ func (g *GoogleDirectory) loadUsers() {
 }
 
 func (g *GoogleDirectory) loadGroup(groupKey string) (*admin.Group, bool) {
-	client := auth.GoogleClient()
+	client := g.ExecutionContext.GoogleClient
 
 	seelog.Tracef("Loading Google Groups: GroupKey[%s]", groupKey)
 
@@ -111,7 +114,7 @@ func (g *GoogleDirectory) loadGroup(groupKey string) (*admin.Group, bool) {
 
 func (g *GoogleDirectory) loadRawGroupMembers(groupKey, parentGroupKey string) (members []*admin.Member) {
 	seelog.Tracef("Loading members of Google Group: ParentKey[%s] GroupKey[%s]", parentGroupKey, groupKey)
-	client := auth.GoogleClient()
+	client := g.ExecutionContext.GoogleClient
 
 	m, err := client.Members.List(groupKey).MaxResults(googleLoadChunkSize).Do()
 	if err != nil {
@@ -139,7 +142,7 @@ func (g *GoogleDirectory) loadRawGroupMembers(groupKey, parentGroupKey string) (
 }
 
 func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Account) {
-	client := auth.GoogleClient()
+	client := g.ExecutionContext.GoogleClient
 
 	seelog.Tracef("Loading Google Customer Members: CustomerId[%s]", customerId)
 

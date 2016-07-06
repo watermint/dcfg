@@ -2,9 +2,11 @@ package groupsync
 
 import (
 	"github.com/cihub/seelog"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/directory"
 	"github.com/watermint/dcfg/explorer"
+	"github.com/watermint/dcfg/text"
 )
 
 type GroupSync struct {
@@ -12,6 +14,18 @@ type GroupSync struct {
 	DropboxAccountDirectory directory.AccountDirectory
 	DropboxGroupDirectory   directory.GroupDirectory
 	GoogleDirectory         directory.GroupResolver
+}
+
+func NewGroupSync(context cli.ExecutionContext) GroupSync {
+	gd := directory.GoogleDirectory{ExecutionContext: context}
+	dd := directory.DropboxDirectory{ExecutionContext: context}
+	dp := connector.CreateConnector(context)
+	return GroupSync{
+		DropboxConnector:        dp,
+		DropboxAccountDirectory: &dd,
+		DropboxGroupDirectory:   &dd,
+		GoogleDirectory:         &gd,
+	}
 }
 
 func (g *GroupSync) onDropboxGroupNotFound(googleGroup directory.Group) {
@@ -80,5 +94,17 @@ func (g *GroupSync) Sync(targetGroup string) {
 		g.syncNewGroup(googleGroup)
 	} else {
 		g.updateExistingGroup(googleGroup, dropboxGroup)
+	}
+}
+
+func (g *GroupSync) SyncFromList(context cli.ExecutionContext) {
+	path := context.Options.GroupWhiteList
+	whiteList, err := text.ReadLines(path)
+	if err != nil {
+		seelog.Errorf("Unable to load Google Group white list: file[%s]", path)
+		explorer.FatalShutdown("Ensure file exist and readable: file[%s]", path)
+	}
+	for _, x := range whiteList {
+		g.Sync(x)
 	}
 }
