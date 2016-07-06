@@ -88,7 +88,7 @@ func (o *Options) PathDropboxToken() string {
 	return path.Join(o.BasePath, FILENAME_DROPBOX_TOKEN)
 }
 
-func (o *Options) Parse(args []string) error {
+func (o *Options) Parse() error {
 	modeAuth := flag.String(optNameModeAuth, "", optDescModeAuth)
 	modeSync := flag.String(optNameModeSync, "", optDescModeSync)
 	basePath := flag.String(optNameBasePath, "", optDescBasePath)
@@ -96,12 +96,7 @@ func (o *Options) Parse(args []string) error {
 	dryRun := flag.Bool(optNameDryRun, true, optDescDryRun)
 	groupWhiteList := flag.String(optNameGroupWhiteList, "", optDescGroupWhiteList)
 
-	flagSet := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	err := flagSet.Parse(args)
-
-	if err != nil {
-		return err
-	}
+	flag.Parse()
 
 	o.ModeAuth = *modeAuth
 	o.ModeSync = *modeSync

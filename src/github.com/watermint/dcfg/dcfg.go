@@ -16,9 +16,9 @@ var (
 
 func main() {
 	options := cli.Options{}
-	options.Parse(os.Args[:1])
+	options.Parse()
 	if err := options.Validate(); err != nil {
-		fmt.Errorf("Error: %v", err)
+		fmt.Printf("Error: %v\n", err)
 		options.Usage()
 		os.Exit(1)
 	}
