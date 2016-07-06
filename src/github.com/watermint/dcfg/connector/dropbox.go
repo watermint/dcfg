@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/explorer"
 )
 
@@ -18,7 +18,7 @@ type DropboxConnector interface {
 	MembersAdd(email, givenName, surname string)
 }
 
-func CreateConnector(context cli.ExecutionContext) DropboxConnector {
+func CreateConnector(context context.ExecutionContext) DropboxConnector {
 	if context.Options.DryRun {
 		return &DropboxConnectorMock{}
 	} else {
@@ -94,7 +94,7 @@ func (dpm *DropboxConnectorMock) MembersAdd(email, givenName, surname string) {
 }
 
 type DropboxConnectorImpl struct {
-	ExecutionContext cli.ExecutionContext
+	ExecutionContext context.ExecutionContext
 }
 
 func (dps *DropboxConnectorImpl) createGroupSelector(groupId string) (sel *team.GroupSelector) {

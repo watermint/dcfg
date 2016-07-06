@@ -1,8 +1,9 @@
-package cli
+package context
 
 import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
+	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/file"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -15,7 +16,7 @@ import (
 
 type ExecutionContext struct {
 	// Options
-	Options Options
+	Options cli.Options
 
 	// Dropbox Client
 	DropboxClient dropbox.Api

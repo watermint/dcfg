@@ -3,7 +3,7 @@ package auth
 import (
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/explorer"
 	"github.com/watermint/dcfg/file"
 	"golang.org/x/oauth2"
@@ -13,7 +13,7 @@ const (
 	GOOGLE_CUSTOMER_ID = "my_customer"
 )
 
-func getGoogleTokenFromWeb(context cli.ExecutionContext) *oauth2.Token {
+func getGoogleTokenFromWeb(context context.ExecutionContext) *oauth2.Token {
 	seelog.Flush()
 
 	config := context.GoogleClientConfig
@@ -41,7 +41,7 @@ func getGoogleTokenFromWeb(context cli.ExecutionContext) *oauth2.Token {
 	return tok
 }
 
-func verifyGoogleToken(context cli.ExecutionContext, token *oauth2.Token) {
+func verifyGoogleToken(context context.ExecutionContext, token *oauth2.Token) {
 	client, err := context.CreateGoogleClientByToken(token)
 	if err != nil {
 		seelog.Errorf("Authentication failed. err[%s]", err)
@@ -60,7 +60,7 @@ func verifyGoogleToken(context cli.ExecutionContext, token *oauth2.Token) {
 	explorer.ReportSuccess("Verified token for Google Apps")
 }
 
-func UpdateGoogleToken(context cli.ExecutionContext) {
+func UpdateGoogleToken(context context.ExecutionContext) {
 	path := context.Options.PathGoogleToken()
 	token := getGoogleTokenFromWeb(context)
 	verifyGoogleToken(context, token)
@@ -71,7 +71,7 @@ func UpdateGoogleToken(context cli.ExecutionContext) {
 	}
 }
 
-func AuthGoogle(context cli.ExecutionContext) {
+func AuthGoogle(context context.ExecutionContext) {
 	seelog.Info("Start authentication sequence for Google Apps")
 	UpdateGoogleToken(context)
 }

@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/explorer"
 	"github.com/watermint/dcfg/file"
 	"log"
 	"strings"
 )
 
-func verifyDropboxToken(context cli.ExecutionContext, token string) {
+func verifyDropboxToken(context context.ExecutionContext, token string) {
 	verboseOutput := bytes.NewBufferString("Verbose")
 	log.SetOutput(verboseOutput)
 	client := context.CreateDropboxClientByToken(token)
@@ -49,7 +49,7 @@ func getDropboxTokenFromConsole() string {
 	return code
 }
 
-func updateDropboxToken(context cli.ExecutionContext) {
+func updateDropboxToken(context context.ExecutionContext) {
 	token := getDropboxTokenFromConsole()
 	path := context.Options.PathDropboxToken()
 
@@ -62,7 +62,7 @@ func updateDropboxToken(context cli.ExecutionContext) {
 	explorer.ReportSuccess("Dropbox Token file updated: [%s]", path)
 }
 
-func AuthDropbox(context cli.ExecutionContext) {
+func AuthDropbox(context context.ExecutionContext) {
 	seelog.Info("Start authentication sequence for Dropbox")
 	updateDropboxToken(context)
 }

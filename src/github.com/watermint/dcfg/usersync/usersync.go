@@ -4,6 +4,7 @@ import (
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/connector"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/directory"
 )
 
@@ -14,7 +15,7 @@ type UserSync struct {
 	GoogleGroups     directory.GroupResolver
 }
 
-func NewUserSync(context cli.ExecutionContext) UserSync {
+func NewUserSync(context context.ExecutionContext) UserSync {
 	gd := directory.GoogleDirectory{ExecutionContext: context}
 	dd := directory.DropboxDirectory{ExecutionContext: context}
 	dp := connector.CreateConnector(context)
