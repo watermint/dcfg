@@ -3,13 +3,13 @@ package directory
 import (
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/auth"
-	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/explorer"
 	"google.golang.org/api/admin/directory/v1"
 )
 
 type GoogleDirectory struct {
-	ExecutionContext cli.ExecutionContext
+	ExecutionContext context.ExecutionContext
 
 	// API raw data structure
 	rawUsers []*admin.User

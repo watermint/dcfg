@@ -2,8 +2,8 @@ package groupsync
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/connector"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/directory"
 	"github.com/watermint/dcfg/explorer"
 	"github.com/watermint/dcfg/text"
@@ -16,7 +16,7 @@ type GroupSync struct {
 	GoogleDirectory         directory.GroupResolver
 }
 
-func NewGroupSync(context cli.ExecutionContext) GroupSync {
+func NewGroupSync(context context.ExecutionContext) GroupSync {
 	gd := directory.GoogleDirectory{ExecutionContext: context}
 	dd := directory.DropboxDirectory{ExecutionContext: context}
 	dp := connector.CreateConnector(context)
@@ -97,7 +97,7 @@ func (g *GroupSync) Sync(targetGroup string) {
 	}
 }
 
-func (g *GroupSync) SyncFromList(context cli.ExecutionContext) {
+func (g *GroupSync) SyncFromList(context context.ExecutionContext) {
 	path := context.Options.GroupWhiteList
 	whiteList, err := text.ReadLines(path)
 	if err != nil {

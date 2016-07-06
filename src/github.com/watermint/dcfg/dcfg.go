@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/dispatch"
 	"github.com/watermint/dcfg/explorer"
 	"os"
@@ -27,7 +28,7 @@ func main() {
 	defer explorer.Report()
 	defer seelog.Flush()
 
-	context := cli.ExecutionContext{
+	context := context.ExecutionContext{
 		Options: options,
 	}
 

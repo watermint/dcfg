@@ -3,12 +3,12 @@ package dispatch
 import (
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/auth"
-	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/groupsync"
 	"github.com/watermint/dcfg/usersync"
 )
 
-func DispatchAuth(context cli.ExecutionContext) {
+func DispatchAuth(context context.ExecutionContext) {
 	switch {
 	case context.Options.IsModeAuthGoogle():
 		seelog.Trace("Start Auth Sequence: Google")
@@ -19,7 +19,7 @@ func DispatchAuth(context cli.ExecutionContext) {
 	}
 }
 
-func DispatchSync(context cli.ExecutionContext) {
+func DispatchSync(context context.ExecutionContext) {
 	context.InitForSync()
 	if context.Options.IsModeSyncUserProvision() {
 		seelog.Trace("Start Sync: User Provision")
@@ -41,7 +41,7 @@ func DispatchSync(context cli.ExecutionContext) {
 	}
 }
 
-func Dispatch(context cli.ExecutionContext) {
+func Dispatch(context context.ExecutionContext) {
 	switch {
 	case context.Options.IsModeAuth():
 		DispatchAuth(context)

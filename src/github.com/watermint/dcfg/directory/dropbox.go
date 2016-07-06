@@ -3,12 +3,12 @@ package directory
 import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"github.com/watermint/dcfg/cli"
+	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/explorer"
 )
 
 type DropboxDirectory struct {
-	ExecutionContext cli.ExecutionContext
+	ExecutionContext context.ExecutionContext
 
 	// API raw data structure
 	rawMembers        []*team.TeamMemberInfo

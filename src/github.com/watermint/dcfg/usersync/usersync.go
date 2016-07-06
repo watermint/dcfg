@@ -2,7 +2,6 @@ package usersync
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/connector"
 	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/directory"
