@@ -1,11 +1,11 @@
 package text
 
 import (
-	"strings"
 	"io/ioutil"
+	"strings"
 )
 
-func SplitLines(rawText string) (lines[] string) {
+func SplitLines(rawText string) (lines []string) {
 	// CRLF -> LF
 	text := strings.Replace(rawText, "\r\n", "\n", -1)
 
@@ -15,7 +15,7 @@ func SplitLines(rawText string) (lines[] string) {
 	return strings.Split(text, "\n")
 }
 
-func ReadLines(filePath string) (lines[] string, err error) {
+func ReadLines(filePath string) (lines []string, err error) {
 	seq, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []string{}, err

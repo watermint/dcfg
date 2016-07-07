@@ -15,4 +15,3 @@ func (d *UserSync) SyncProvision() {
 		d.DropboxConnector.MembersAdd(x.Email, x.GivenName, x.Surname)
 	}
 }
-

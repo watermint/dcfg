@@ -41,4 +41,3 @@ func TestIsDirectory(t *testing.T) {
 		t.Errorf("%s should be marked as directory", directory)
 	}
 }
-

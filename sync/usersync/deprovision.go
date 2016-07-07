@@ -2,7 +2,6 @@ package usersync
 
 import "github.com/cihub/seelog"
 
-
 // Deprovision Dropbox account based on Google side status.
 // If the account, which identified by email, is not exist on Google Apps,
 // this function deletes Dropbox account.
@@ -21,4 +20,3 @@ func (d *UserSync) SyncDeprovision() {
 		d.DropboxConnector.MembersRemove(x.Email)
 	}
 }
-

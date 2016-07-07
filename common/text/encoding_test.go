@@ -1,9 +1,9 @@
 package text
 
 import (
+	"encoding/binary"
 	"testing"
 	"unicode/utf16"
-	"encoding/binary"
 )
 
 func TestDecodeUnicodeSequence(t *testing.T) {
@@ -13,7 +13,7 @@ func TestDecodeUnicodeSequence(t *testing.T) {
 	textUtf16 := utf16.Encode(textRune)
 
 	// create UTF16 Little Endian byte sequence
-	textUtf16LeSeq := make([]byte, 0, len(textUtf16) * 2 + 2)
+	textUtf16LeSeq := make([]byte, 0, len(textUtf16)*2+2)
 	textUtf16LeSeq = append(textUtf16LeSeq, bomUtf16LE...)
 	for _, x := range textUtf16 {
 		s := make([]byte, 2)
@@ -22,7 +22,7 @@ func TestDecodeUnicodeSequence(t *testing.T) {
 	}
 
 	// create UTF16 Big Endian byte sequence
-	textUtf16BeSeq := make([]byte, 0, len(textUtf16) * 2 + 2)
+	textUtf16BeSeq := make([]byte, 0, len(textUtf16)*2+2)
 	textUtf16BeSeq = append(textUtf16BeSeq, bomUtf16BE...)
 	for _, x := range textUtf16 {
 		s := make([]byte, 2)

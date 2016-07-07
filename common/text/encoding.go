@@ -24,8 +24,8 @@ func toUint16Seq(seq []byte, bigEndian bool) []uint16 {
 		y = 0
 	}
 	for i := range utf16Seq {
-		high := uint16(seq[2 * i + x]) << 8
-		low := uint16(seq[2 * i + y])
+		high := uint16(seq[2*i+x]) << 8
+		low := uint16(seq[2*i+y])
 		utf16Seq[i] = high | low
 	}
 	return utf16Seq

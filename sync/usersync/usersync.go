@@ -56,4 +56,3 @@ func (d *UserSync) membersNotInGroup(member []directory.Account, gd directory.Gr
 	}
 	return
 }
-

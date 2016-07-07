@@ -10,7 +10,7 @@ func TestReadLinesIgnoreWhitespace(t *testing.T) {
 		"Test4/テスト/試験",
 	}
 
-	compareLines := func (x, y []string) bool {
+	compareLines := func(x, y []string) bool {
 		if len(x) != len(y) {
 			return false
 		}
@@ -22,7 +22,7 @@ func TestReadLinesIgnoreWhitespace(t *testing.T) {
 		return true
 	}
 
-	compare := func (label, file string) {
+	compare := func(label, file string) {
 		lines, err := ReadLinesIgnoreWhitespace(file)
 		if err != nil {
 			t.Errorf("%s; Read err: %s", label, err)
