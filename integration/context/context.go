@@ -129,11 +129,3 @@ func (e *ExecutionContext) InitForSync() error {
 	}
 	return nil
 }
-
-func (e *ExecutionContext) InitForTest() {
-	_, file, _, _ := runtime.Caller(1)
-	projectRoot := path.Dir(path.Dir(path.Dir(file)))
-	seelog.Infof("Test Base directory: %s", projectRoot)
-	basePath := path.Join(projectRoot, "test_data")
-	e.Options.BasePath = basePath
-}

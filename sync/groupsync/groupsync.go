@@ -100,7 +100,7 @@ func (g *GroupSync) Sync(targetGroup string) {
 
 func (g *GroupSync) SyncFromList(context context.ExecutionContext) {
 	path := context.Options.GroupWhiteList
-	whiteList, err := text.ReadLines(path)
+	whiteList, err := text.ReadLinesIgnoreWhitespace(path)
 	if err != nil {
 		seelog.Errorf("Unable to load Google Group white list: file[%s]", path)
 		explorer.FatalShutdown("Ensure file exist and readable: file[%s]", path)
