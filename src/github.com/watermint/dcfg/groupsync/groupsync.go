@@ -20,6 +20,10 @@ func NewGroupSync(context context.ExecutionContext) GroupSync {
 	gd := directory.GoogleDirectory{ExecutionContext: context}
 	dd := directory.DropboxDirectory{ExecutionContext: context}
 	dp := connector.CreateConnector(context)
+
+	gd.Load()
+	dd.Load()
+
 	return GroupSync{
 		DropboxConnector:        dp,
 		DropboxAccountDirectory: &dd,

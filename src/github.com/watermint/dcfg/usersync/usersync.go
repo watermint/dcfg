@@ -18,6 +18,10 @@ func NewUserSync(context context.ExecutionContext) UserSync {
 	gd := directory.GoogleDirectory{ExecutionContext: context}
 	dd := directory.DropboxDirectory{ExecutionContext: context}
 	dp := connector.CreateConnector(context)
+
+	gd.Load()
+	dd.Load()
+
 	return UserSync{
 		DropboxConnector: dp,
 		DropboxAccounts:  &dd,
@@ -64,7 +68,9 @@ func (d *UserSync) SyncDeprovision() {
 	dropboxMembersNotInGoogle := d.membersNotInDirectory(dropboxMembers, d.GoogleAccounts)
 	dropboxMembersNotInGroup := d.membersNotInGroup(dropboxMembersNotInGoogle, d.GoogleGroups)
 
-	seelog.Tracef("Dropbox [%d] user(s) are not in Google", len(dropboxMembersNotInGroup))
+	seelog.Tracef("Dropbox [%d] user(s)", len(dropboxMembers))
+	seelog.Tracef("Dropbox [%d] user(s) are not in Google", len(dropboxMembersNotInGoogle))
+	seelog.Tracef("Dropbox [%d] user(s) are not in Group", len(dropboxMembersNotInGroup))
 	for _, x := range dropboxMembersNotInGroup {
 		seelog.Tracef("Removing Dropbox User: Email[%s]", x.Email)
 		d.DropboxConnector.MembersRemove(x.Email)

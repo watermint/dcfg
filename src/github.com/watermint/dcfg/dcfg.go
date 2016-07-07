@@ -25,7 +25,6 @@ func main() {
 
 	explorer.Start(options, AppVersion)
 
-	defer explorer.Report()
 	defer seelog.Flush()
 
 	context := context.ExecutionContext{

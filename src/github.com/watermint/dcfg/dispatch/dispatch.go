@@ -6,6 +6,7 @@ import (
 	"github.com/watermint/dcfg/context"
 	"github.com/watermint/dcfg/groupsync"
 	"github.com/watermint/dcfg/usersync"
+	"github.com/watermint/dcfg/explorer"
 )
 
 func DispatchAuth(context context.ExecutionContext) {
@@ -42,6 +43,7 @@ func DispatchSync(context context.ExecutionContext) {
 }
 
 func Dispatch(context context.ExecutionContext) {
+	defer explorer.Report()
 	switch {
 	case context.Options.IsModeAuth():
 		DispatchAuth(context)

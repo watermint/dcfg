@@ -132,7 +132,7 @@ func (o *Options) Validate() error {
 	if o.ModeSync != "" {
 		syncCmds := strings.Split(o.ModeSync, ",")
 		for _, x := range syncCmds {
-			if !domain.ContainsString(modeSyncOpts, o.ModeSync) {
+			if !domain.ContainsString(modeSyncOpts, x) {
 				return errors.New(fmt.Sprintf("Undefined option for `-%s`: %s", optNameModeSync, x))
 			}
 			if x == MODE_SYNC_GROUP_PROVISION && o.GroupWhiteList == "" {
