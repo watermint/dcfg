@@ -1,9 +1,8 @@
-package dcfg
+package usersync
 
 import (
 	"github.com/watermint/dcfg/integration/connector"
 	"github.com/watermint/dcfg/integration/directory"
-	"github.com/watermint/dcfg/sync/usersync"
 	"testing"
 )
 
@@ -32,7 +31,7 @@ func TestUserSyncAddUser(t *testing.T) {
 			},
 		},
 	}
-	userSync := usersync.UserSync{
+	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,
@@ -76,7 +75,7 @@ func TestUserSyncAddUser2(t *testing.T) {
 			},
 		},
 	}
-	userSync := usersync.UserSync{
+	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,
@@ -122,7 +121,7 @@ func TestUserSyncAddUser3(t *testing.T) {
 			},
 		},
 	}
-	userSync := usersync.UserSync{
+	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &googleAccounts,

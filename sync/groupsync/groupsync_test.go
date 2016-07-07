@@ -1,9 +1,8 @@
-package dcfg
+package groupsync
 
 import (
 	"github.com/watermint/dcfg/integration/connector"
 	"github.com/watermint/dcfg/integration/directory"
-	"github.com/watermint/dcfg/sync/groupsync"
 	"testing"
 )
 
@@ -50,7 +49,7 @@ func TestGroupSync1(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -109,7 +108,7 @@ func TestGroupSync2(t *testing.T) {
 			},
 		},
 	}
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -171,7 +170,7 @@ func TestGroupSync3(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -234,7 +233,7 @@ func TestGroupSync4(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -285,7 +284,7 @@ func TestGroupSync5(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -335,7 +334,7 @@ func TestGroupSync6(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -395,7 +394,7 @@ func TestGroupSync7(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,
@@ -445,7 +444,7 @@ func TestGroupSync8(t *testing.T) {
 		},
 	}
 
-	groupSync := groupsync.GroupSync{
+	groupSync := GroupSync{
 		DropboxConnector:        &provision,
 		DropboxAccountDirectory: &dropboxAccounts,
 		DropboxGroupDirectory:   &dropboxGroups,

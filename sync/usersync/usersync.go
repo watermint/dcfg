@@ -1,7 +1,6 @@
 package usersync
 
 import (
-	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/integration/connector"
 	"github.com/watermint/dcfg/integration/context"
 	"github.com/watermint/dcfg/integration/directory"
@@ -58,35 +57,3 @@ func (d *UserSync) membersNotInGroup(member []directory.Account, gd directory.Gr
 	return
 }
 
-// Deprovision Dropbox account based on Google side status.
-// If the account, which identified by email, is not exist on Google Apps,
-// this function deletes Dropbox account.
-func (d *UserSync) SyncDeprovision() {
-	seelog.Trace("Account Sync: Deprovision")
-
-	dropboxMembers := d.DropboxAccounts.Accounts()
-	dropboxMembersNotInGoogle := d.membersNotInDirectory(dropboxMembers, d.GoogleAccounts)
-	dropboxMembersNotInGroup := d.membersNotInGroup(dropboxMembersNotInGoogle, d.GoogleGroups)
-
-	seelog.Tracef("Dropbox [%d] user(s)", len(dropboxMembers))
-	seelog.Tracef("Dropbox [%d] user(s) are not in Google", len(dropboxMembersNotInGoogle))
-	seelog.Tracef("Dropbox [%d] user(s) are not in Group", len(dropboxMembersNotInGroup))
-	for _, x := range dropboxMembersNotInGroup {
-		seelog.Tracef("Removing Dropbox User: Email[%s]", x.Email)
-		d.DropboxConnector.MembersRemove(x.Email)
-	}
-}
-
-func (d *UserSync) SyncProvision() {
-	seelog.Trace("Account Sync: Provision")
-
-	googleMembers := d.GoogleAccounts.Accounts()
-	googleMembersNotInDropbox := d.membersNotInDirectory(googleMembers, d.DropboxAccounts)
-
-	seelog.Tracef("%d users in Google Apps", len(googleMembers))
-	seelog.Tracef("Google [%d] user(s) are not in Dropbox", len(googleMembersNotInDropbox))
-	for _, x := range googleMembersNotInDropbox {
-		seelog.Tracef("Adding Dropbox User: Email[%s]", x)
-		d.DropboxConnector.MembersAdd(x.Email, x.GivenName, x.Surname)
-	}
-}

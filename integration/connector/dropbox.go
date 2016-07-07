@@ -209,7 +209,7 @@ func (dps *DropboxConnectorImpl) MembersRemove(email string) {
 	} else {
 		if u[0].MemberInfo.Role.Tag == "team_admin" {
 			seelog.Warnf("Team Admin should not be removed by script: Email[%s]", email)
-			explorer.ReportFailure("Unable to remove member Dropbox account: Email[%s]", email)
+			explorer.ReportFailure("Unable to remove Dropbox Team Admin account: Email[%s]", email)
 			return
 		}
 	}

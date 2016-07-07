@@ -13,5 +13,9 @@ RUN go get -u github.com/dropbox/dropbox-sdk-go-unofficial
 RUN go get -u google.golang.org/api/admin/directory/v1
 RUN go get -u google.golang.org/cloud/compute/metadata
 
-ADD . $GOPATH
-ENTRYPOINT $GOPATH/build/build_inside_docker.sh
+ENV PROJECT_ROOT=$GOPATH/src/github.com/watermint/dcfg
+RUN mkdir -p $PROJECT_ROOT
+
+ADD . $PROJECT_ROOT
+ENTRYPOINT $PROJECT_ROOT/build/build_inside_docker.sh
+
