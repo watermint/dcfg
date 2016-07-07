@@ -1,8 +1,8 @@
 package dcfg
 
 import (
-	"github.com/watermint/dcfg/connector"
 	"testing"
+	"github.com/watermint/dcfg/integration/connector"
 )
 
 func expectDropboxConnector(connector.DropboxConnector) {

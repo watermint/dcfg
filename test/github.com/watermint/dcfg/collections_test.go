@@ -1,8 +1,8 @@
 package dcfg
 
 import (
-	"github.com/watermint/dcfg/domain"
 	"testing"
+	"github.com/watermint/dcfg/common/domain"
 )
 
 func TestCollectionsContainsString(t *testing.T) {

@@ -1,10 +1,10 @@
 package dcfg
 
 import (
-	"github.com/watermint/dcfg/connector"
-	"github.com/watermint/dcfg/directory"
-	"github.com/watermint/dcfg/usersync"
 	"testing"
+	"github.com/watermint/dcfg/integration/connector"
+	"github.com/watermint/dcfg/integration/directory"
+	"github.com/watermint/dcfg/sync/usersync"
 )
 
 func TestUserSyncAddUser(t *testing.T) {

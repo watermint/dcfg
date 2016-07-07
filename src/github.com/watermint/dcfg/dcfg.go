@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/cli"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/dispatch"
-	"github.com/watermint/dcfg/explorer"
+	"github.com/watermint/dcfg/cli/dispatch"
+	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/integration/context"
 	"os"
 )
 

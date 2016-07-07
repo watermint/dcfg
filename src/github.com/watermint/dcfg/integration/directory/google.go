@@ -2,9 +2,9 @@ package directory
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/auth"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/explorer"
+	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/integration/auth"
+	"github.com/watermint/dcfg/integration/context"
 	"google.golang.org/api/admin/directory/v1"
 )
 

@@ -2,11 +2,11 @@ package dispatch
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/auth"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/groupsync"
-	"github.com/watermint/dcfg/usersync"
-	"github.com/watermint/dcfg/explorer"
+	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/integration/auth"
+	"github.com/watermint/dcfg/integration/context"
+	"github.com/watermint/dcfg/sync/groupsync"
+	"github.com/watermint/dcfg/sync/usersync"
 )
 
 func DispatchAuth(context context.ExecutionContext) {

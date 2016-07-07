@@ -2,9 +2,9 @@ package usersync
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/connector"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/directory"
+	"github.com/watermint/dcfg/integration/connector"
+	"github.com/watermint/dcfg/integration/context"
+	"github.com/watermint/dcfg/integration/directory"
 )
 
 type UserSync struct {

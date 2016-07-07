@@ -2,11 +2,11 @@ package groupsync
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/connector"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/directory"
-	"github.com/watermint/dcfg/explorer"
-	"github.com/watermint/dcfg/text"
+	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/integration/connector"
+	"github.com/watermint/dcfg/integration/context"
+	"github.com/watermint/dcfg/integration/directory"
+	"github.com/watermint/dcfg/common/text"
 )
 
 type GroupSync struct {
@@ -52,9 +52,6 @@ func (g *GroupSync) membersNotInGroup(member []directory.Account, group director
 		}
 	}
 	return
-}
-
-func (g *GroupSync) addMembersToDropboxGroup(dropboxGroupId string, member []string) {
 }
 
 func (g *GroupSync) syncNewGroup(googleGroup directory.Group) {

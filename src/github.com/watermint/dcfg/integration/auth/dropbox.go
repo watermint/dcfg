@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/explorer"
-	"github.com/watermint/dcfg/file"
+	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/common/file"
+	"github.com/watermint/dcfg/integration/context"
 	"log"
 	"strings"
 )

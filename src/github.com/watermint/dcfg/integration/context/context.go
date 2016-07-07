@@ -4,7 +4,7 @@ import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/watermint/dcfg/cli"
-	"github.com/watermint/dcfg/file"
+	"github.com/watermint/dcfg/common/file"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"

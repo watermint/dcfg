@@ -3,8 +3,8 @@ package directory
 import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"github.com/watermint/dcfg/context"
-	"github.com/watermint/dcfg/explorer"
+	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/integration/context"
 )
 
 type DropboxDirectory struct {
