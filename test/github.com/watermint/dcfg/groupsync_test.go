@@ -1,10 +1,10 @@
 package dcfg
 
 import (
-	"testing"
 	"github.com/watermint/dcfg/integration/connector"
 	"github.com/watermint/dcfg/integration/directory"
 	"github.com/watermint/dcfg/sync/groupsync"
+	"testing"
 )
 
 func TestGroupSync1(t *testing.T) {

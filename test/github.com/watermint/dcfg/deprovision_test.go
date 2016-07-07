@@ -1,10 +1,10 @@
 package dcfg
 
 import (
-	"testing"
 	"github.com/watermint/dcfg/integration/connector"
 	"github.com/watermint/dcfg/integration/directory"
 	"github.com/watermint/dcfg/sync/usersync"
+	"testing"
 )
 
 func TestUserSyncRemoveUser(t *testing.T) {

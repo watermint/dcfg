@@ -3,10 +3,10 @@ package groupsync
 import (
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/common/text"
 	"github.com/watermint/dcfg/integration/connector"
 	"github.com/watermint/dcfg/integration/context"
 	"github.com/watermint/dcfg/integration/directory"
-	"github.com/watermint/dcfg/common/text"
 )
 
 type GroupSync struct {
