@@ -11,6 +11,10 @@ type Account struct {
 	Surname   string
 }
 
+func (a *Account) Id() string {
+	return a.Email
+}
+
 type Group struct {
 	GroupId       string
 	GroupName     string

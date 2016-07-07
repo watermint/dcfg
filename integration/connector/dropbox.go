@@ -6,6 +6,7 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
 	"github.com/watermint/dcfg/cli/explorer"
 	"github.com/watermint/dcfg/integration/context"
+	"github.com/watermint/dcfg/common/domain"
 )
 
 type DropboxConnector interface {
@@ -40,23 +41,14 @@ func (dpm *DropboxConnectorMock) CreateOperationLog(operationName string, argume
 	return fmt.Sprintf("[%s] %v", operationName, arguments)
 }
 
-func (dpm *DropboxConnectorMock) FindArray(needle string, haystack []string) bool {
-	for _, x := range haystack {
-		if x == needle {
-			return true
-		}
-	}
-	return false
-}
-
 func (dpm *DropboxConnectorMock) AssertLogs(expected []string) (unexpected []string, missing []string, success bool) {
 	for _, x := range expected {
-		if !dpm.FindArray(x, dpm.History) {
+		if !domain.ContainsString(dpm.History, x) {
 			missing = append(missing, x)
 		}
 	}
 	for _, x := range dpm.History {
-		if !dpm.FindArray(x, expected) {
+		if !domain.ContainsString(expected, x) {
 			unexpected = append(unexpected, x)
 		}
 	}

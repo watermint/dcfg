@@ -9,6 +9,9 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/admin/directory/v1"
 	"io/ioutil"
+	"runtime"
+	"path"
+	"errors"
 )
 
 type ExecutionContext struct {
@@ -125,4 +128,23 @@ func (e *ExecutionContext) InitForSync() error {
 		return err
 	}
 	return nil
+}
+
+func getTestBasePath() string {
+	_, file, _, _ := runtime.Caller(1)
+	projectRoot := path.Dir(path.Dir(path.Dir(file)))
+	return path.Join(projectRoot, "test_data")
+}
+
+func NewExecutionContextForTest() (ExecutionContext, error) {
+	basePath := getTestBasePath()
+	if file.IsDirectory(basePath) {
+		ctx := ExecutionContext{
+			Options: cli.Options{
+				BasePath: getTestBasePath(),
+			},
+		}
+		return ctx, nil
+	}
+	return ExecutionContext{}, errors.New("Test directory not found")
 }
