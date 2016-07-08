@@ -30,11 +30,11 @@ func CreateConnector(context context.ExecutionContext) DropboxConnector {
 }
 
 type DropboxConnectorMock struct {
-	History []string
+	history []string
 }
 
 func (dpm *DropboxConnectorMock) ClearOperationHistory() {
-	dpm.History = []string{}
+	dpm.history = []string{}
 }
 
 func (dpm *DropboxConnectorMock) CreateOperationLog(operationName string, arguments ...string) string {
@@ -43,11 +43,11 @@ func (dpm *DropboxConnectorMock) CreateOperationLog(operationName string, argume
 
 func (dpm *DropboxConnectorMock) AssertLogs(expected []string) (unexpected []string, missing []string, success bool) {
 	for _, x := range expected {
-		if !util.ContainsString(dpm.History, x) {
+		if !util.ContainsString(dpm.history, x) {
 			missing = append(missing, x)
 		}
 	}
-	for _, x := range dpm.History {
+	for _, x := range dpm.history {
 		if !util.ContainsString(expected, x) {
 			unexpected = append(unexpected, x)
 		}
@@ -56,7 +56,7 @@ func (dpm *DropboxConnectorMock) AssertLogs(expected []string) (unexpected []str
 }
 
 func (dpm *DropboxConnectorMock) enqueueOperationLog(operationName string, arguments ...string) {
-	dpm.History = append(dpm.History, dpm.CreateOperationLog(operationName, arguments...))
+	dpm.history = append(dpm.history, dpm.CreateOperationLog(operationName, arguments...))
 }
 
 func (dpm *DropboxConnectorMock) GroupsCreate(groupName, groupExternalId string) string {

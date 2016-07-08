@@ -166,6 +166,7 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members map[st
 }
 
 func (g *GoogleDirectory) getFlattenMember(member *admin.Member, parentGroupKey string, nest int) (members map[string]Account) {
+	members = make(map[string]Account)
 	switch member.Type {
 	case "USER":
 		seelog.Tracef("Google Group: Loading user: Nest[%d] Parent[%s] UserEmail[%s]", nest, parentGroupKey, member.Email)
