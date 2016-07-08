@@ -1,13 +1,13 @@
 package main
 
 import (
-	"testing"
-	"github.com/watermint/dcfg/integration/context"
-	"path"
+	"github.com/watermint/dcfg/cli/explorer"
 	"github.com/watermint/dcfg/common/file"
+	"github.com/watermint/dcfg/integration/context"
 	"github.com/watermint/dcfg/sync/groupsync"
 	"github.com/watermint/dcfg/sync/usersync"
-	"github.com/watermint/dcfg/cli/explorer"
+	"path"
+	"testing"
 )
 
 func TestIntegration(t *testing.T) {
