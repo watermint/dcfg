@@ -15,7 +15,7 @@ type GoogleDirectory struct {
 	rawUsers []*admin.User
 
 	// Abstract data structure
-	accounts []Account
+	accounts map[string]Account
 }
 
 const (
@@ -36,13 +36,12 @@ func (g *GoogleDirectory) Group(groupId string) (Group, bool) {
 }
 
 func (g *GoogleDirectory) createGroupFromRaw(rawGroup *admin.Group, rawMembers []*admin.Member) Group {
-	members := []Account{}
+	members := map[string]Account{}
 	for _, x := range rawMembers {
 		for _, y := range g.getFlattenMember(x, rawGroup.Email, 0) {
-			members = g.appendMember(members, y)
+			members[y.Email] = y
 		}
 	}
-
 	group := Group{
 		GroupId:    rawGroup.Email,
 		GroupEmail: rawGroup.Email,
@@ -51,20 +50,6 @@ func (g *GoogleDirectory) createGroupFromRaw(rawGroup *admin.Group, rawMembers [
 	}
 
 	return group
-}
-
-func (g *GoogleDirectory) appendMember(members []Account, member Account) []Account {
-	found := false
-	for _, x := range members {
-		if x.Email == member.Email {
-			found = true
-			break
-		}
-	}
-	if !found {
-		members = append(members, member)
-	}
-	return members
 }
 
 func (g *GoogleDirectory) loadUsers() {
@@ -141,7 +126,7 @@ func (g *GoogleDirectory) loadRawGroupMembers(groupKey, parentGroupKey string) (
 	return
 }
 
-func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Account) {
+func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members map[string]Account) {
 	client := g.ExecutionContext.GoogleClient
 
 	seelog.Tracef("Loading Google Customer Members: CustomerId[%s]", customerId)
@@ -153,11 +138,11 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 	}
 	seelog.Tracef("Google Customer Member loaded (chunk): %d", len(r.Users))
 	for _, x := range r.Users {
-		members = g.appendMember(members, Account{
+		members[x.PrimaryEmail] = Account{
 			Email:     x.PrimaryEmail,
 			GivenName: x.Name.GivenName,
 			Surname:   x.Name.FamilyName,
-		})
+		}
 	}
 	token := r.NextPageToken
 
@@ -169,39 +154,39 @@ func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members []Acco
 		}
 		seelog.Tracef("Google Customer Member loaded (chunk): %d", len(r.Users))
 		for _, x := range r.Users {
-			members = g.appendMember(members, Account{
+			members[x.PrimaryEmail] = Account{
 				Email:     x.PrimaryEmail,
 				GivenName: x.Name.GivenName,
 				Surname:   x.Name.FamilyName,
-			})
+			}
 		}
 		token = r.NextPageToken
 	}
 	return
 }
 
-func (g *GoogleDirectory) getFlattenMember(member *admin.Member, parentGroupKey string, nest int) (members []Account) {
+func (g *GoogleDirectory) getFlattenMember(member *admin.Member, parentGroupKey string, nest int) (members map[string]Account) {
 	switch member.Type {
 	case "USER":
 		seelog.Tracef("Google Group: Loading user: Nest[%d] Parent[%s] UserEmail[%s]", nest, parentGroupKey, member.Email)
 
 		//TODO: Fetch name for user-provision (for future enhancement like filter by group)
-		members = g.appendMember(members, Account{
+		members[member.Email] = Account{
 			Email: member.Email,
-		})
+		}
 	case "GROUP":
 		seelog.Tracef("Google Group: Loading Group: Nest[%d] Parent[%s], ChildGroupEmail[%s]", nest, parentGroupKey, member.Email)
 		childMembers := g.loadRawGroupMembers(member.Email, parentGroupKey)
 		for _, x := range childMembers {
 			y := g.getFlattenMember(x, member.Email, nest+1)
 			for _, z := range y {
-				members = g.appendMember(members, z)
+				members[z.Email] = z
 			}
 		}
 	case "CUSTOMER":
 		seelog.Tracef("Google Group: Loading Customer: Nest[%d] Parent[%s] Customer[%s]", nest, parentGroupKey, member.Id)
 		for _, y := range g.loadCustomerMembers(member.Id) {
-			members = g.appendMember(members, y)
+			members[y.Email] = y
 		}
 
 	default:
@@ -216,17 +201,18 @@ func (g *GoogleDirectory) Load() {
 	g.accounts = g.createAccounts()
 }
 
-func (g *GoogleDirectory) createAccounts() (accounts []Account) {
+func (g *GoogleDirectory) createAccounts() (accounts map[string]Account) {
+	accounts = make(map[string]Account)
 	for _, u := range g.rawUsers {
-		accounts = g.appendMember(accounts, Account{
+		accounts[u.PrimaryEmail] = Account{
 			Email:     u.PrimaryEmail,
 			GivenName: u.Name.GivenName,
 			Surname:   u.Name.FamilyName,
-		})
+		}
 	}
 	return
 }
 
-func (g *GoogleDirectory) Accounts() []Account {
+func (g *GoogleDirectory) Accounts() map[string]Account {
 	return g.accounts
 }

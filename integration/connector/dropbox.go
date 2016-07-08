@@ -5,8 +5,8 @@ import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
 	"github.com/watermint/dcfg/cli/explorer"
+	"github.com/watermint/dcfg/common/util"
 	"github.com/watermint/dcfg/integration/context"
-	"github.com/watermint/dcfg/common/domain"
 )
 
 type DropboxConnector interface {
@@ -43,12 +43,12 @@ func (dpm *DropboxConnectorMock) CreateOperationLog(operationName string, argume
 
 func (dpm *DropboxConnectorMock) AssertLogs(expected []string) (unexpected []string, missing []string, success bool) {
 	for _, x := range expected {
-		if !domain.ContainsString(dpm.History, x) {
+		if !util.ContainsString(dpm.History, x) {
 			missing = append(missing, x)
 		}
 	}
 	for _, x := range dpm.History {
-		if !domain.ContainsString(expected, x) {
+		if !util.ContainsString(expected, x) {
 			unexpected = append(unexpected, x)
 		}
 	}

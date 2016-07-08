@@ -5,8 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/watermint/dcfg/common/domain"
 	"github.com/watermint/dcfg/common/file"
+	"github.com/watermint/dcfg/common/util"
 	"os"
 	"path"
 	"strings"
@@ -68,15 +68,15 @@ func (o *Options) IsModeAuthDropbox() bool {
 }
 func (o *Options) IsModeSyncUserProvision() bool {
 	modes := strings.Split(o.ModeSync, ",")
-	return domain.ContainsString(modes, MODE_SYNC_USER_PROVISION)
+	return util.ContainsString(modes, MODE_SYNC_USER_PROVISION)
 }
 func (o *Options) IsModeSyncUserDeprovision() bool {
 	modes := strings.Split(o.ModeSync, ",")
-	return domain.ContainsString(modes, MODE_SYNC_USER_DEPROVISION)
+	return util.ContainsString(modes, MODE_SYNC_USER_DEPROVISION)
 }
 func (o *Options) IsModeGroupProvision() bool {
 	modes := strings.Split(o.ModeSync, ",")
-	return domain.ContainsString(modes, MODE_SYNC_GROUP_PROVISION)
+	return util.ContainsString(modes, MODE_SYNC_GROUP_PROVISION)
 }
 func (o *Options) PathGoogleToken() string {
 	return path.Join(o.BasePath, FILENAME_GOOGLE_TOKEN)
@@ -125,14 +125,14 @@ func (o *Options) Validate() error {
 		return errors.New(fmt.Sprintf("Directory [%s] not exist.", o.BasePath))
 	}
 	if o.ModeAuth != "" {
-		if !domain.ContainsString(modeAuthOpts, o.ModeAuth) {
+		if !util.ContainsString(modeAuthOpts, o.ModeAuth) {
 			return errors.New(fmt.Sprintf("Undefined option for `-%s`: %s", optNameModeAuth, o.ModeAuth))
 		}
 	}
 	if o.ModeSync != "" {
 		syncCmds := strings.Split(o.ModeSync, ",")
 		for _, x := range syncCmds {
-			if !domain.ContainsString(modeSyncOpts, x) {
+			if !util.ContainsString(modeSyncOpts, x) {
 				return errors.New(fmt.Sprintf("Undefined option for `-%s`: %s", optNameModeSync, x))
 			}
 			if x == MODE_SYNC_GROUP_PROVISION && o.GroupWhiteList == "" {

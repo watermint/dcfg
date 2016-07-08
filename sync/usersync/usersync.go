@@ -29,9 +29,9 @@ func NewUserSync(context context.ExecutionContext) UserSync {
 	}
 }
 
-func (d *UserSync) membersNotInDirectory(member []directory.Account, ad directory.AccountDirectory) (notInDir []directory.Account) {
-	for _, x := range member {
-		if !directory.ExistInDirectory(ad, x) {
+func (d *UserSync) membersNotInDirectory(members map[string]directory.Account, ad directory.AccountDirectory) (notInDir []directory.Account) {
+	for _, x := range members {
+		if _, exist := ad.Accounts()[x.Email]; !exist {
 			notInDir = append(notInDir, x)
 		}
 	}

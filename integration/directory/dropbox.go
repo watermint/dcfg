@@ -16,8 +16,8 @@ type DropboxDirectory struct {
 	rawGroupFullInfo  map[string]*team.GroupFullInfo
 
 	// Abstract data structure
-	groups   []Group
-	accounts []Account
+	groups   map[string]Group   // GroupId -> Group
+	accounts map[string]Account // Email -> Account
 }
 
 const (
@@ -138,26 +138,28 @@ func (d *DropboxDirectory) Load() {
 	d.accounts = d.createAccounts()
 }
 
-func (d *DropboxDirectory) createAccounts() (members []Account) {
+func (d *DropboxDirectory) createAccounts() (members map[string]Account) {
+	members = make(map[string]Account)
 	for _, m := range d.rawMembers {
-		members = append(members, Account{
+		members[m.Profile.Email] = Account{
 			Email:     m.Profile.Email,
 			GivenName: m.Profile.Name.GivenName,
 			Surname:   m.Profile.Name.Surname,
-		})
+		}
 	}
 	return
 }
 
-func (d *DropboxDirectory) createGroups() (groups []Group) {
+func (d *DropboxDirectory) createGroups() (groups map[string]Group) {
+	groups = make(map[string]Group)
 	for gid, g := range d.rawGroupFullInfo {
-		members := []Account{}
+		members := map[string]Account{}
 		for _, m := range g.Members {
-			members = append(members, Account{
+			members[m.Profile.Email] = Account{
 				Email:     m.Profile.Email,
 				GivenName: m.Profile.Name.GivenName,
 				Surname:   m.Profile.Name.Surname,
-			})
+			}
 		}
 		group := Group{
 			GroupId:       gid,
@@ -165,15 +167,15 @@ func (d *DropboxDirectory) createGroups() (groups []Group) {
 			CorrelationId: g.GroupExternalId,
 			Members:       members,
 		}
-		groups = append(groups, group)
+		groups[gid] = group
 	}
 	return
 }
 
-func (d *DropboxDirectory) Groups() []Group {
+func (d *DropboxDirectory) Groups() map[string]Group {
 	return d.groups
 }
 
-func (d *DropboxDirectory) Accounts() []Account {
+func (d *DropboxDirectory) Accounts() map[string]Account {
 	return d.accounts
 }

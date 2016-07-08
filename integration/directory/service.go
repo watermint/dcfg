@@ -2,7 +2,7 @@ package directory
 
 type AccountDirectory interface {
 	Load()
-	Accounts() []Account
+	Accounts() map[string]Account // email -> Account
 }
 
 type Account struct {
@@ -11,43 +11,22 @@ type Account struct {
 	Surname   string
 }
 
-func (a *Account) Id() string {
-	return a.Email
-}
-
 type Group struct {
 	GroupId       string
 	GroupName     string
 	GroupEmail    string
-	Members       []Account
+	Members       map[string]Account // email -> Account
 	CorrelationId string
 }
 
 type GroupDirectory interface {
 	Load()
-	Groups() []Group
+	Groups() map[string]Group // groupId -> Group
 }
 
 type GroupResolver interface {
-	Group(groupId string) (Group, bool)
-}
-
-func ExistInDirectory(ad AccountDirectory, account Account) bool {
-	for _, x := range ad.Accounts() {
-		if account.Email == x.Email {
-			return true
-		}
-	}
-	return false
-}
-
-func ExistInGroup(group Group, account Account) bool {
-	for _, x := range group.Members {
-		if x.Email == account.Email {
-			return true
-		}
-	}
-	return false
+	// Find by group key. groupKey matches both GroupId and GroupEmail.
+	Group(groupKey string) (Group, bool)
 }
 
 func FindByCorrelationId(gd GroupDirectory, correlationId string) (Group, bool) {
@@ -59,10 +38,6 @@ func FindByCorrelationId(gd GroupDirectory, correlationId string) (Group, bool) 
 	return Group{}, false
 }
 
-func FindByGroupId(gd GroupResolver, groupId string) (Group, bool) {
-	return gd.Group(groupId)
-}
-
 type AccountDirectoryMock struct {
 	MockData []Account
 }
@@ -70,8 +45,12 @@ type AccountDirectoryMock struct {
 func (adm *AccountDirectoryMock) Load() {
 }
 
-func (adm *AccountDirectoryMock) Accounts() []Account {
-	return adm.MockData
+func (adm *AccountDirectoryMock) Accounts() map[string]Account {
+	accounts := make(map[string]Account)
+	for _, x := range adm.MockData {
+		accounts[x.Email] = x
+	}
+	return accounts
 }
 
 type GroupDirectoryMock struct {
@@ -81,8 +60,12 @@ type GroupDirectoryMock struct {
 func (gdm *GroupDirectoryMock) Load() {
 }
 
-func (gdm *GroupDirectoryMock) Groups() []Group {
-	return gdm.MockData
+func (gdm *GroupDirectoryMock) Groups() map[string]Group {
+	groups := make(map[string]Group)
+	for _, x := range gdm.MockData {
+		groups[x.GroupId] = x
+	}
+	return groups
 }
 
 func (gdm *GroupDirectoryMock) Group(groupId string) (Group, bool) {

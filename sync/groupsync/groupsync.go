@@ -36,18 +36,19 @@ func (g *GroupSync) onDropboxGroupNotFound(googleGroup directory.Group) {
 	g.DropboxConnector.GroupsCreate(googleGroup.GroupName, googleGroup.GroupId)
 }
 
-func (g *GroupSync) filterGoogleGroupMemberByAccountExistence(googleGroup directory.Group) (member []directory.Account) {
+func (g *GroupSync) filterGoogleGroupMemberByAccountExistence(googleGroup directory.Group) (member map[string]directory.Account) {
+	member = make(map[string]directory.Account)
 	for _, x := range googleGroup.Members {
-		if directory.ExistInDirectory(g.DropboxAccountDirectory, x) {
-			member = append(member, x)
+		if _, exist := g.DropboxAccountDirectory.Accounts()[x.Email]; exist {
+			member[x.Email] = x
 		}
 	}
 	return
 }
 
-func (g *GroupSync) membersNotInGroup(member []directory.Account, group directory.Group) (notInGroup []directory.Account) {
-	for _, x := range member {
-		if !directory.ExistInGroup(group, x) {
+func (g *GroupSync) membersNotInGroup(members map[string]directory.Account, group directory.Group) (notInGroup []directory.Account) {
+	for _, x := range members {
+		if _, exist := group.Members[x.Email]; !exist {
 			notInGroup = append(notInGroup, x)
 		}
 	}
@@ -83,7 +84,7 @@ func (g *GroupSync) updateExistingGroup(googleGroup directory.Group, dropboxGrou
 
 func (g *GroupSync) Sync(targetGroup string) {
 	seelog.Tracef("Group Sync from Google Group: Email[%s]", targetGroup)
-	googleGroup, exist := directory.FindByGroupId(g.GoogleDirectory, targetGroup)
+	googleGroup, exist := g.GoogleDirectory.Group(targetGroup)
 	if !exist {
 		explorer.ReportFailure("Sync skipped for Google Group: %s (reason: Google Group not found)", targetGroup)
 		seelog.Warnf("Google Group not found for sync: Email[%s]", targetGroup)

@@ -1,6 +1,7 @@
 package context
 
 import (
+	"errors"
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/common/file"
@@ -9,9 +10,8 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/admin/directory/v1"
 	"io/ioutil"
-	"runtime"
 	"path"
-	"errors"
+	"runtime"
 )
 
 type ExecutionContext struct {

@@ -1,8 +1,8 @@
 package directory
 
 import (
-	"testing"
 	"github.com/watermint/dcfg/integration/context"
+	"testing"
 )
 
 func TestDropboxDirectory(t *testing.T) {

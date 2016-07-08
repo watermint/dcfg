@@ -13,8 +13,8 @@ func TestGroupSync1(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"a@example.com": directory.Account{
 						Email: "a@example.com",
 					},
 				},
@@ -26,8 +26,8 @@ func TestGroupSync1(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"a@example.com": directory.Account{
 						Email: "a@example.com",
 					},
 				},
@@ -70,8 +70,8 @@ func TestGroupSync2(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"a@example.com": directory.Account{
 						Email: "a@example.com",
 					},
 				},
@@ -83,11 +83,11 @@ func TestGroupSync2(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"a@example.com": directory.Account{
 						Email: "a@example.com",
 					},
-					directory.Account{
+					"b@example.com": directory.Account{
 						Email: "b@example.com",
 					},
 				},
@@ -131,8 +131,8 @@ func TestGroupSync3(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"b@example.com": directory.Account{
 						Email: "b@example.com",
 					},
 				},
@@ -144,11 +144,11 @@ func TestGroupSync3(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"a@example.com": directory.Account{
 						Email: "a@example.com",
 					},
-					directory.Account{
+					"b@example.com": directory.Account{
 						Email: "b@example.com",
 					},
 				},
@@ -194,8 +194,8 @@ func TestGroupSync4(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"c@example.com": directory.Account{
 						Email: "c@example.com",
 					},
 				},
@@ -207,11 +207,11 @@ func TestGroupSync4(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"a@example.com": directory.Account{
 						Email: "a@example.com",
 					},
-					directory.Account{
+					"b@example.com": directory.Account{
 						Email: "b@example.com",
 					},
 				},
@@ -259,8 +259,8 @@ func TestGroupSync5(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"c@example.com": directory.Account{
 						Email: "c@example.com",
 					},
 				},
@@ -309,8 +309,8 @@ func TestGroupSync6(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"d@example.com": directory.Account{
 						Email: "d@example.com",
 					},
 				},
@@ -358,8 +358,8 @@ func TestGroupSync7(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1@example.com",
 				GroupName: "G1-RENAME",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"c@example.com": directory.Account{
 						Email: "c@example.com",
 					},
 				},
@@ -371,8 +371,8 @@ func TestGroupSync7(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"c@example.com": directory.Account{
 						Email: "c@example.com",
 					},
 				},
@@ -421,8 +421,8 @@ func TestGroupSync8(t *testing.T) {
 			directory.Group{
 				GroupId:   "g1",
 				GroupName: "G1",
-				Members: []directory.Account{
-					directory.Account{
+				Members: map[string]directory.Account{
+					"c@example.com": directory.Account{
 						Email: "c@example.com",
 					},
 				},
