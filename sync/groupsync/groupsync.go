@@ -82,6 +82,15 @@ func (g *GroupSync) updateExistingGroup(googleGroup directory.Group, dropboxGrou
 	}
 }
 
+func findByCorrelationId(gd directory.GroupDirectory, correlationId string) (directory.Group, bool) {
+	for _, x := range gd.Groups() {
+		if x.CorrelationId == correlationId {
+			return x, true
+		}
+	}
+	return directory.Group{}, false
+}
+
 func (g *GroupSync) Sync(targetGroup string) {
 	seelog.Tracef("Group Sync from Google Group: Email[%s]", targetGroup)
 	googleGroup, exist := g.GoogleDirectory.Group(targetGroup)
@@ -91,7 +100,7 @@ func (g *GroupSync) Sync(targetGroup string) {
 		return
 	}
 
-	dropboxGroup, exist := directory.FindByCorrelationId(g.DropboxGroupDirectory, googleGroup.GroupId)
+	dropboxGroup, exist := findByCorrelationId(g.DropboxGroupDirectory, googleGroup.GroupId)
 	if !exist {
 		g.syncNewGroup(googleGroup)
 	} else {

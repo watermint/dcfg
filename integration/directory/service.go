@@ -29,15 +29,6 @@ type GroupResolver interface {
 	Group(groupKey string) (Group, bool)
 }
 
-func FindByCorrelationId(gd GroupDirectory, correlationId string) (Group, bool) {
-	for _, x := range gd.Groups() {
-		if x.CorrelationId == correlationId {
-			return x, true
-		}
-	}
-	return Group{}, false
-}
-
 type AccountDirectoryMock struct {
 	MockData []Account
 }
