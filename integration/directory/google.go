@@ -127,6 +127,7 @@ func (g *GoogleDirectory) loadRawGroupMembers(groupKey, parentGroupKey string) (
 }
 
 func (g *GoogleDirectory) loadCustomerMembers(customerId string) (members map[string]Account) {
+	members = make(map[string]Account)
 	client := g.ExecutionContext.GoogleClient
 
 	seelog.Tracef("Loading Google Customer Members: CustomerId[%s]", customerId)
