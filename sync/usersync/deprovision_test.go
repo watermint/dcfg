@@ -8,14 +8,10 @@ import (
 
 func TestUserSyncRemoveUser(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
-	googleAccounts := directory.AccountDirectoryMock{
-		MockData: []directory.Account{
-			directory.Account{
-				Email: "a@example.com",
-			},
-			directory.Account{
-				Email: "b@example.com",
-			},
+	googleEmail := directory.EmailResolverMock{
+		MockData: []string{
+			"a@example.com",
+			"b@example.com",
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
@@ -34,8 +30,9 @@ func TestUserSyncRemoveUser(t *testing.T) {
 	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
-		GoogleAccounts:   &googleAccounts,
+		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
+		GoogleEmail:      &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -49,14 +46,10 @@ func TestUserSyncRemoveUser(t *testing.T) {
 
 func TestUserSyncRemoveUser2(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
-	googleAccounts := directory.AccountDirectoryMock{
-		MockData: []directory.Account{
-			directory.Account{
-				Email: "a@example.com",
-			},
-			directory.Account{
-				Email: "b@example.com",
-			},
+	googleEmail := directory.EmailResolverMock{
+		MockData: []string{
+			"a@example.com",
+			"b@example.com",
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
@@ -75,8 +68,9 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
-		GoogleAccounts:   &googleAccounts,
+		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
+		GoogleEmail: &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -91,14 +85,10 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 
 func TestUserSyncEqual(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
-	googleAccounts := directory.AccountDirectoryMock{
-		MockData: []directory.Account{
-			directory.Account{
-				Email: "a@example.com",
-			},
-			directory.Account{
-				Email: "b@example.com",
-			},
+	googleEmail := directory.EmailResolverMock{
+		MockData: []string{
+			"a@example.com",
+			"b@example.com",
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
@@ -114,8 +104,9 @@ func TestUserSyncEqual(t *testing.T) {
 	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
-		GoogleAccounts:   &googleAccounts,
+		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
+		GoogleEmail: &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -127,17 +118,11 @@ func TestUserSyncEqual(t *testing.T) {
 
 func TestUserSyncGoogleHasMore(t *testing.T) {
 	provision := connector.DropboxConnectorMock{}
-	googleAccounts := directory.AccountDirectoryMock{
-		MockData: []directory.Account{
-			directory.Account{
-				Email: "a@example.com",
-			},
-			directory.Account{
-				Email: "b@example.com",
-			},
-			directory.Account{
-				Email: "c@example.com",
-			},
+	googleEmail := directory.EmailResolverMock{
+		MockData: []string{
+			"a@example.com",
+			"b@example.com",
+			"c@example.com",
 		},
 	}
 	dropboxAccounts := directory.AccountDirectoryMock{
@@ -153,56 +138,9 @@ func TestUserSyncGoogleHasMore(t *testing.T) {
 	userSync := UserSync{
 		DropboxConnector: &provision,
 		DropboxAccounts:  &dropboxAccounts,
-		GoogleAccounts:   &googleAccounts,
+		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
-	}
-	userSync.SyncDeprovision()
-
-	unexpected, missing, success := provision.AssertLogs([]string{})
-	if !success {
-		t.Error("Sync failed", unexpected, missing, success)
-	}
-}
-
-func TestUserSyncExistInGroup(t *testing.T) {
-	provision := connector.DropboxConnectorMock{}
-	googleAccounts := directory.AccountDirectoryMock{
-		MockData: []directory.Account{
-			directory.Account{
-				Email: "a@example.com",
-			},
-			directory.Account{
-				Email: "b@example.com",
-			},
-		},
-	}
-	googleGroups := directory.GroupDirectoryMock{
-		MockData: []directory.Group{
-			directory.Group{
-				GroupId:    "c@example.com",
-				GroupEmail: "c@example.com",
-				GroupName:  "Group-C",
-			},
-		},
-	}
-	dropboxAccounts := directory.AccountDirectoryMock{
-		MockData: []directory.Account{
-			directory.Account{
-				Email: "a@example.com",
-			},
-			directory.Account{
-				Email: "b@example.com",
-			},
-			directory.Account{
-				Email: "c@example.com",
-			},
-		},
-	}
-	userSync := UserSync{
-		DropboxConnector: &provision,
-		DropboxAccounts:  &dropboxAccounts,
-		GoogleAccounts:   &googleAccounts,
-		GoogleGroups:     &googleGroups,
+		GoogleEmail:      &googleEmail,
 	}
 	userSync.SyncDeprovision()
 

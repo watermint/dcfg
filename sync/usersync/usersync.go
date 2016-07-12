@@ -11,6 +11,7 @@ type UserSync struct {
 	DropboxAccounts  directory.AccountDirectory
 	GoogleAccounts   directory.AccountDirectory
 	GoogleGroups     directory.GroupResolver
+	GoogleEmail      directory.EmailResolver
 }
 
 func NewUserSync(context context.ExecutionContext) UserSync {
@@ -26,6 +27,7 @@ func NewUserSync(context context.ExecutionContext) UserSync {
 		DropboxAccounts:  &dd,
 		GoogleAccounts:   &gd,
 		GoogleGroups:     &gd,
+		GoogleEmail:      &gd,
 	}
 }
 

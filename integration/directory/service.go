@@ -29,6 +29,11 @@ type GroupResolver interface {
 	Group(groupKey string) (Group, bool)
 }
 
+type EmailResolver interface {
+	// Ensure email exist in the directory.
+	EmailExist(email string) (bool, error)
+}
+
 type AccountDirectoryMock struct {
 	MockData []Account
 }
@@ -66,4 +71,17 @@ func (gdm *GroupDirectoryMock) Group(groupId string) (Group, bool) {
 		}
 	}
 	return Group{}, false
+}
+
+type EmailResolverMock struct {
+	MockData []string
+}
+
+func (erm *EmailResolverMock) EmailExist(email string) (bool, error) {
+	for _, x := range erm.MockData {
+		if x == email {
+			return true, nil
+		}
+	}
+	return false, nil
 }
