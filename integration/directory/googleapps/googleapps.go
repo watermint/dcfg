@@ -60,16 +60,9 @@ func UserEmails(user *admin.User) (primary string, emails []string) {
 				seelog.Warnf("Unexpected JSON structure: userEmails[%v] type[%T]", ue1, ue1)
 			}
 		}
-		//for _, userEmail := range userEmails {
-		//	if email, exist := userEmail["address"]; exist {
-		//		emails = append(emails, email)
-		//	} else {
-		//		seelog.Warnf("Unexpected JSON structure: user.Emails[%v]", user.Emails)
-		//	}
-		//}
 
 	default:
-		seelog.Warnf("Unexpected JSON structure: userEmails[%v] type[%T]", user.Emails, user.Emails)
+		seelog.Warnf("Unexpected JSON structure: user.Emails[%v] type[%T]", user.Emails, user.Emails)
 	}
 
 	return user.PrimaryEmail, emails
@@ -262,4 +255,40 @@ func (g *GoogleAppsImpl) CustomerUsers(customerId string) []*admin.User {
 		token = r.NextPageToken
 	}
 	return rawUsers
+}
+
+type GoogleAppsMock struct {
+	MockUsers     []*admin.User
+	MockGroups    []*admin.Group
+	MockMembers   map[string][]*admin.Member
+	MockCustomers map[string][]*admin.User
+}
+
+func (g *GoogleAppsMock) Preload() {
+}
+
+func (g *GoogleAppsMock) Users() []*admin.User {
+	return g.MockUsers
+}
+
+func (g *GoogleAppsMock) Groups() []*admin.Group {
+	return g.MockGroups
+}
+
+func (g *GoogleAppsMock) GroupMembers(groupEmail string) []*admin.Member {
+	m, e := g.MockMembers[groupEmail]
+	if e {
+		return m
+	} else {
+		return []*admin.Member{}
+	}
+}
+
+func (g *GoogleAppsMock) CustomerUsers(customerId string) []*admin.User {
+	m, e := g.MockCustomers[customerId]
+	if e {
+		return m
+	} else {
+		return []*admin.User{}
+	}
 }

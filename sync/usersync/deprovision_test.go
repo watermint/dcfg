@@ -70,7 +70,7 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
-		GoogleEmail: &googleEmail,
+		GoogleEmail:      &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -106,7 +106,7 @@ func TestUserSyncEqual(t *testing.T) {
 		DropboxAccounts:  &dropboxAccounts,
 		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
-		GoogleEmail: &googleEmail,
+		GoogleEmail:      &googleEmail,
 	}
 	userSync.SyncDeprovision()
 

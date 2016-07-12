@@ -99,6 +99,7 @@ func (g *GoogleDirectory) preloadEmails() {
 		g.emailTypes[group.Email] = GOOGLE_EMAIL_TYPE_GROUP
 	}
 
+	// User emails
 	for _, user := range g.googleApps.Users() {
 		primary, emails := googleapps.UserEmails(user)
 
