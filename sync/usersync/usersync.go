@@ -15,19 +15,16 @@ type UserSync struct {
 }
 
 func NewUserSync(context context.ExecutionContext) UserSync {
-	gd := directory.GoogleDirectory{ExecutionContext: context}
-	dd := directory.DropboxDirectory{ExecutionContext: context}
+	gd := directory.NewGoogleDirectory(context)
+	dd := directory.NewDropboxDirectory(context)
 	dp := connector.CreateConnector(context)
-
-	gd.Load()
-	dd.Load()
 
 	return UserSync{
 		DropboxConnector: dp,
-		DropboxAccounts:  &dd,
-		GoogleAccounts:   &gd,
-		GoogleGroups:     &gd,
-		GoogleEmail:      &gd,
+		DropboxAccounts:  dd,
+		GoogleAccounts:   gd,
+		GoogleGroups:     gd,
+		GoogleEmail:      gd,
 	}
 }
 

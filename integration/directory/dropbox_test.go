@@ -13,10 +13,10 @@ func TestDropboxDirectory(t *testing.T) {
 	ctx.InitDropboxClient()
 
 	dd := DropboxDirectory{
-		ExecutionContext: ctx,
+		executionContext: ctx,
 	}
 
-	dd.Load()
+	dd.load()
 	accounts := dd.Accounts()
 	if len(accounts) < 1 {
 		t.Error("No accounts loaded from Dropbox")

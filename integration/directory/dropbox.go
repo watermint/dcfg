@@ -8,7 +8,7 @@ import (
 )
 
 type DropboxDirectory struct {
-	ExecutionContext context.ExecutionContext
+	executionContext context.ExecutionContext
 
 	// API raw data structure
 	rawMembers        []*team.TeamMemberInfo
@@ -24,9 +24,17 @@ const (
 	dropboxLoadChunkSize = 100
 )
 
+func NewDropboxDirectory(ctx context.ExecutionContext) *DropboxDirectory {
+	dd := DropboxDirectory{
+		executionContext: ctx,
+	}
+	dd.load()
+	return &dd
+}
+
 func (d *DropboxDirectory) loadMembers() {
 	d.rawMembers = []*team.TeamMemberInfo{}
-	client := d.ExecutionContext.DropboxClient
+	client := d.executionContext.DropboxClient
 
 	seelog.Trace("Loading Dropbox Team Member Info")
 
@@ -68,7 +76,7 @@ func (d *DropboxDirectory) loadMembers() {
 }
 
 func (d *DropboxDirectory) loadGroupSummaries() {
-	client := d.ExecutionContext.DropboxClient
+	client := d.executionContext.DropboxClient
 
 	seelog.Trace("Loading Dropbox Group Summaries")
 
@@ -108,7 +116,7 @@ func (d *DropboxDirectory) loadGroupSummaries() {
 
 func (d *DropboxDirectory) loadGroups() {
 	groups := make(map[string]*team.GroupFullInfo)
-	client := d.ExecutionContext.DropboxClient
+	client := d.executionContext.DropboxClient
 
 	for i, gs := range d.rawGroupSummaries {
 		sel := team.GroupsSelector{}
@@ -129,7 +137,7 @@ func (d *DropboxDirectory) loadGroups() {
 	d.rawGroupFullInfo = groups
 }
 
-func (d *DropboxDirectory) Load() {
+func (d *DropboxDirectory) load() {
 	d.loadMembers()
 	d.loadGroupSummaries()
 	d.loadGroups()

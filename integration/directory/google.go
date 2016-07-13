@@ -1,6 +1,7 @@
 package directory
 
 import (
+	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/integration/context"
 	"github.com/watermint/dcfg/integration/directory/googleapps"
@@ -8,8 +9,6 @@ import (
 )
 
 type GoogleDirectory struct {
-	ExecutionContext context.ExecutionContext
-
 	googleApps googleapps.GoogleApps
 
 	// All emails
@@ -24,6 +23,22 @@ const (
 	GOOGLE_EMAIL_TYPE_GROUP
 	GOOGLE_EMAIL_TYPE_ALIAS
 )
+
+func NewGoogleDirectory(executionContext context.ExecutionContext) *GoogleDirectory {
+	gd := GoogleDirectory{
+		googleApps: googleapps.NewGoogleApps(executionContext),
+	}
+	gd.load()
+	return &gd
+}
+
+func NewGoogleDirectoryForTest(ga googleapps.GoogleApps) *GoogleDirectory {
+	gd := GoogleDirectory{
+		googleApps: ga,
+	}
+	gd.load()
+	return &gd
+}
 
 func (g *GoogleDirectory) Group(groupKey string) (Group, bool) {
 	seelog.Tracef("Loading Google Group: GroupId[%s]", groupKey)
@@ -112,16 +127,15 @@ func (g *GoogleDirectory) preloadEmails() {
 	}
 }
 
-func (g *GoogleDirectory) Load() {
-	g.googleApps = googleapps.NewGoogleApps(g.ExecutionContext)
+func (g *GoogleDirectory) load() {
 	g.preloadEmails()
-
 	g.accounts = g.createAccounts()
 }
 
 func (g *GoogleDirectory) createAccounts() (accounts map[string]Account) {
 	accounts = make(map[string]Account)
 	for _, u := range g.googleApps.Users() {
+		seelog.Info("CreateAccount: %v", u)
 		accounts[u.PrimaryEmail] = Account{
 			Email:     u.PrimaryEmail,
 			GivenName: u.Name.GivenName,
@@ -138,4 +152,110 @@ func (g *GoogleDirectory) Accounts() map[string]Account {
 func (g *GoogleDirectory) EmailExist(email string) (bool, error) {
 	_, e := g.emailTypes[email]
 	return e, nil
+}
+
+func CreateGoogleDirectoryForIntegrationTest() *GoogleDirectory {
+	createEmails := func(email ...string) []interface{} {
+		emailMapArray := make([]interface{}, 0)
+		for _, x := range email {
+			emailMap := make(map[string]interface{})
+			emailMap["address"] = x
+
+			emailMapArray = append(emailMapArray, emailMap)
+		}
+		return emailMapArray
+	}
+	createUser := func(label string, primaryEmail string, emails ...string) *admin.User {
+		allEmails := make([]string, 0, len(emails)+1)
+		allEmails = append(allEmails, primaryEmail)
+		allEmails = append(allEmails, emails...)
+		return &admin.User{
+			Name: &admin.UserName{
+				GivenName:  fmt.Sprintf("gn-%s", label),
+				FamilyName: fmt.Sprintf("fn-%s", label),
+			},
+			PrimaryEmail: primaryEmail,
+			Emails:       createEmails(allEmails...),
+		}
+	}
+
+	users := []*admin.User{
+		createUser("a", "a@example.com"),
+		createUser("b", "b@example.com", "b2@example.com", "b@example.net"),
+		createUser("c", "c@example.com"),
+		createUser("d", "d@example.com", "d@example.org"),
+	}
+
+	groups := []*admin.Group{
+		&admin.Group{
+			Id:    "tokyo",
+			Email: "tokyo@example.com",
+			Name:  "Tokyo",
+		},
+		&admin.Group{
+			Id:    "minato",
+			Email: "minato@example.com",
+			Name:  "Minato",
+		},
+		&admin.Group{
+			Id:    "meguro",
+			Email: "meguro@example.com",
+			Name:  "Meguro",
+		},
+		&admin.Group{
+			Id:    "all",
+			Email: "all@example.com",
+			Name:  "All",
+		},
+	}
+	membersTokyo := []*admin.Member{
+		&admin.Member{
+			Type:  "USER",
+			Email: "a@example.com",
+		},
+		&admin.Member{
+			Type:  "GROUP",
+			Email: "minato@example.com",
+		},
+		&admin.Member{
+			Type:  "GROUP",
+			Email: "meguro@example.com",
+		},
+	}
+	membersMinato := []*admin.Member{
+		&admin.Member{
+			Type:  "USER",
+			Email: "b@example.com",
+		},
+	}
+	membersMeguro := []*admin.Member{
+		&admin.Member{
+			Type:  "USER",
+			Email: "c@example.com",
+		},
+	}
+	membersAll := []*admin.Member{
+		&admin.Member{
+			Type: "CUSTOMER",
+			Id:   "mock_customer",
+		},
+	}
+
+	members := map[string][]*admin.Member{
+		"all@example.com":    membersAll,
+		"tokyo@example.com":  membersTokyo,
+		"minato@example.com": membersMinato,
+		"meguro@example.com": membersMeguro,
+	}
+
+	ga := googleapps.GoogleAppsMock{
+		MockCustomers: map[string][]*admin.User{
+			"mock_customer": users,
+		},
+		MockMembers: members,
+		MockUsers:   users,
+		MockGroups:  groups,
+	}
+
+	return NewGoogleDirectoryForTest(&ga)
 }

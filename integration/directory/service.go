@@ -1,7 +1,6 @@
 package directory
 
 type AccountDirectory interface {
-	Load()
 	Accounts() map[string]Account // email -> Account
 }
 
@@ -20,7 +19,6 @@ type Group struct {
 }
 
 type GroupDirectory interface {
-	Load()
 	Groups() map[string]Group // groupId -> Group
 }
 
@@ -38,9 +36,6 @@ type AccountDirectoryMock struct {
 	MockData []Account
 }
 
-func (adm *AccountDirectoryMock) Load() {
-}
-
 func (adm *AccountDirectoryMock) Accounts() map[string]Account {
 	accounts := make(map[string]Account)
 	for _, x := range adm.MockData {
@@ -51,9 +46,6 @@ func (adm *AccountDirectoryMock) Accounts() map[string]Account {
 
 type GroupDirectoryMock struct {
 	MockData []Group
-}
-
-func (gdm *GroupDirectoryMock) Load() {
 }
 
 func (gdm *GroupDirectoryMock) Groups() map[string]Group {

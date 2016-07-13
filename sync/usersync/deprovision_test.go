@@ -149,3 +149,59 @@ func TestUserSyncGoogleHasMore(t *testing.T) {
 		t.Error("Sync failed", unexpected, missing, success)
 	}
 }
+
+func TestUserSync_SyncDeprovision(t *testing.T) {
+	emailsShouldKeep := []string{
+		"a@example.com",
+		"b@example.com",
+		"b2@example.com",
+		"b@example.net",
+		"c@example.com",
+		"d@example.com",
+		"d@example.org",
+		"tokyo@example.com",
+		"minato@example.com",
+		"meguro@example.com",
+		"all@example.com",
+	}
+	emailsShouldRemove := []string{
+		"x@example.com",
+		"y@example.net",
+		"z@example.org",
+	}
+	dropboxAccounts := make([]directory.Account, 0, len(emailsShouldKeep)+len(emailsShouldRemove))
+	for _, x := range emailsShouldKeep {
+		dropboxAccounts = append(dropboxAccounts, directory.Account{
+			Email: x,
+		})
+	}
+	for _, x := range emailsShouldRemove {
+		dropboxAccounts = append(dropboxAccounts, directory.Account{
+			Email: x,
+		})
+	}
+
+	dp := &connector.DropboxConnectorMock{}
+	dd := &directory.AccountDirectoryMock{
+		MockData: dropboxAccounts,
+	}
+	gd := directory.CreateGoogleDirectoryForIntegrationTest()
+
+	userSync := UserSync{
+		DropboxConnector: dp,
+		DropboxAccounts:  dd,
+		GoogleAccounts:   gd,
+		GoogleGroups:     gd,
+		GoogleEmail:      gd,
+	}
+	userSync.SyncDeprovision()
+
+	expectedOperations := make([]string, 0, len(emailsShouldRemove))
+	for _, x := range emailsShouldRemove {
+		expectedOperations = append(expectedOperations, dp.CreateOperationLog("MembersRemove", x))
+	}
+	unexpected, missing, success := dp.AssertLogs(expectedOperations)
+	if !success {
+		t.Error("Sync failed", unexpected, missing, success)
+	}
+}
