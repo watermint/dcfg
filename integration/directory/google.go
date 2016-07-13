@@ -135,7 +135,6 @@ func (g *GoogleDirectory) load() {
 func (g *GoogleDirectory) createAccounts() (accounts map[string]Account) {
 	accounts = make(map[string]Account)
 	for _, u := range g.googleApps.Users() {
-		seelog.Info("CreateAccount: %v", u)
 		accounts[u.PrimaryEmail] = Account{
 			Email:     u.PrimaryEmail,
 			GivenName: u.Name.GivenName,
