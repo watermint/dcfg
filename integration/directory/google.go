@@ -122,6 +122,10 @@ func (g *GoogleDirectory) preloadEmails() {
 			g.emailTypes[e] = GOOGLE_EMAIL_TYPE_ALIAS
 		}
 
+		for _, e := range user.Aliases {
+			g.emailTypes[e] = GOOGLE_EMAIL_TYPE_ALIAS
+		}
+
 		// overwrite primary email
 		g.emailTypes[primary] = GOOGLE_EMAIL_TYPE_USER
 	}
@@ -164,10 +168,10 @@ func CreateGoogleDirectoryForIntegrationTest() *GoogleDirectory {
 		}
 		return emailMapArray
 	}
-	createUser := func(label string, primaryEmail string, emails ...string) *admin.User {
-		allEmails := make([]string, 0, len(emails)+1)
+	createUser := func(label string, primaryEmail string, otherEmails []string, alias []string) *admin.User {
+		allEmails := make([]string, 0, len(otherEmails)+1)
 		allEmails = append(allEmails, primaryEmail)
-		allEmails = append(allEmails, emails...)
+		allEmails = append(allEmails, otherEmails...)
 		return &admin.User{
 			Name: &admin.UserName{
 				GivenName:  fmt.Sprintf("gn-%s", label),
@@ -175,14 +179,15 @@ func CreateGoogleDirectoryForIntegrationTest() *GoogleDirectory {
 			},
 			PrimaryEmail: primaryEmail,
 			Emails:       createEmails(allEmails...),
+			Aliases:      alias,
 		}
 	}
 
 	users := []*admin.User{
-		createUser("a", "a@example.com"),
-		createUser("b", "b@example.com", "b2@example.com", "b@example.net"),
-		createUser("c", "c@example.com"),
-		createUser("d", "d@example.com", "d@example.org"),
+		createUser("a", "a@example.com", []string{}, []string{}),
+		createUser("b", "b@example.com", []string{"b2@example.com", "b@example.net"}, []string{"b3@example.com"}),
+		createUser("c", "c@example.com", []string{}, []string{}),
+		createUser("d", "d@example.com", []string{}, []string{"d@example.org", "d2@example.com"}),
 	}
 
 	groups := []*admin.Group{
