@@ -1,14 +1,17 @@
 language: go
-
 go:
- - 1.6.2
-
+- 1.6.2
 install:
- - go get -u github.com/cihub/seelog
- - go get -u github.com/dropbox/dropbox-sdk-go-unofficial
- - go get -u google.golang.org/api/admin/directory/v1
- - go get -u google.golang.org/cloud/compute/metadata
-
+- go get -u golang.org/x/tools/cmd/cover
+- go get -u github.com/mattn/goveralls
+- go get -u github.com/cihub/seelog
+- go get -u github.com/dropbox/dropbox-sdk-go-unofficial
+- go get -u google.golang.org/api/admin/directory/v1
+- go get -u google.golang.org/cloud/compute/metadata
 script:
- - go test -v github.com/watermint/dcfg/...
-
+- go test -v -covermode=count -coverprofile=covrage.out github.com/watermint/dcfg/...
+after_success:
+- goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+env:
+  global:
+    secure: PPwTankWH+0ET92bdkDixBBVHSbA1wcxt2O/mxFPJqPMfYR/gm0cxRyHLUGFj99hluDQP9jiUcWXHnw5IRxfG72IyXjcavGyORr1eHpHD/AJZUxCtE1/YlHzhMJeS3ui6x3RoF0B1Ca5t7oWC/R3lqeKzC5fUXezvQW2f73KqXQxpXfMqLJb2DQm/38dNkn97qOVGVr3qrNePBpaJ/AagrRO5H/xPJ/h9PdaGnnmtTUMtCgFIWPiYqAcoKHQ+1NwrNfEx6NWOVnl7MDbvKvLiS9E7PrWl0zXUtrnC2ByQM3TjQ7rspQMu3V+53WD/Uaqe2gRSHuyogC9zmUFbWkhokuOYfxktgvykRG/UkfGpbOQbZohuE6IoiPL56b7o5I/rgt3XgTlK/M7PS1MSmq6/7HTGZqGCdX9fPv3Jx4m3uOOYNivP/9GCCkldKEJ7yfKeaYMCgM5wPMjC5bED/hLSRhZHz4CoSRikPrLSH7/8VS5UCniP6ZEogZ3PuiLHyzTMM/SAkC2tL+W9XVH3GElfY3jNG/zWrswczsPcssDaVV3o1rjE7TboGqDgVVlh9l+Kv0CQp+EAYsgTpb9izYrLmG+ftL7smQSx8PO35i8JziPdJ9UvC52Z3/Q/TzIsmzM9ZtUmJOxcDFI4E0nsOr96pp4yP63GMhW0i5OAIufLHY=
