@@ -3,6 +3,7 @@ package directory
 import (
 	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/team_common"
 	"github.com/watermint/dcfg/cli/explorer"
 	"github.com/watermint/dcfg/integration/context"
 )
@@ -12,7 +13,7 @@ type DropboxDirectory struct {
 
 	// API raw data structure
 	rawMembers        []*team.TeamMemberInfo
-	rawGroupSummaries []*team.GroupSummary
+	rawGroupSummaries []*team_common.GroupSummary
 	rawGroupFullInfo  map[string]*team.GroupFullInfo
 
 	// Abstract data structure
