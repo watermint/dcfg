@@ -4,6 +4,7 @@ go:
 
 install:
  - go get -u golang.org/x/tools/cmd/cover
+ - go get -u github.com/modocache/gover
  - go get -u github.com/mattn/goveralls
  - go get -u github.com/cihub/seelog
  - go get -u github.com/dropbox/dropbox-sdk-go-unofficial
