@@ -11,7 +11,8 @@ install:
  - go get -u google.golang.org/cloud/compute/metadata
 
 script:
- - go test -v -covermode=count -coverprofile=coverage.out ./...
+ - go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -L 1 sh -c
+ - gover
 
 after_success:
  - goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
