@@ -2,8 +2,8 @@ package directory
 
 import (
 	"github.com/cihub/seelog"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/team_common"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
 	"github.com/watermint/dcfg/cli/explorer"
 	"github.com/watermint/dcfg/integration/context"
 )

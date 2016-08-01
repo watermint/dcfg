@@ -3,7 +3,8 @@ package context
 import (
 	"errors"
 	"github.com/cihub/seelog"
-	"github.com/dropbox/dropbox-sdk-go-unofficial"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
 	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/common/file"
 	"golang.org/x/net/context"
@@ -20,7 +21,7 @@ type ExecutionContext struct {
 	Options cli.Options
 
 	// Dropbox Client
-	DropboxClient dropbox.Api
+	DropboxClient team.Client
 	DropboxToken  DropboxToken
 
 	// Google Client
@@ -85,8 +86,11 @@ func (e *ExecutionContext) loadGoogleToken() error {
 	return nil
 }
 
-func (e *ExecutionContext) CreateDropboxClientByToken(token string) dropbox.Api {
-	return dropbox.Client(token, dropbox.Options{})
+func (e *ExecutionContext) CreateDropboxClientByToken(token string) team.Client {
+	config := dropbox.Config{
+		Token: token,
+	}
+	return team.New(config)
 }
 
 func (e *ExecutionContext) loadDropboxClient() error {

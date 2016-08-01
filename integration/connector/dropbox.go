@@ -3,7 +3,8 @@ package connector
 import (
 	"fmt"
 	"github.com/cihub/seelog"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
 	"github.com/watermint/dcfg/cli/explorer"
 	"github.com/watermint/dcfg/common/util"
 	"github.com/watermint/dcfg/integration/context"
@@ -91,15 +92,15 @@ type DropboxConnectorImpl struct {
 
 func (dps *DropboxConnectorImpl) createGroupSelector(groupId string) (sel *team.GroupSelector) {
 	return &team.GroupSelector{
-		Tag:     "group_id",
+		Tagged:  dropbox.Tagged{Tag: "group_id"},
 		GroupId: groupId,
 	}
 }
 
 func (dps *DropboxConnectorImpl) createUserSelectArg(accountEmail string) *team.UserSelectorArg {
 	return &team.UserSelectorArg{
-		Tag:   "email",
-		Email: accountEmail,
+		Tagged: dropbox.Tagged{Tag: "email"},
+		Email:  accountEmail,
 	}
 }
 
@@ -107,7 +108,7 @@ func (dps *DropboxConnectorImpl) createMemberAccess(accountEmail string) *team.M
 	return &team.MemberAccess{
 		User: dps.createUserSelectArg(accountEmail),
 		AccessType: &team.GroupAccessType{
-			Tag: "member",
+			Tagged: dropbox.Tagged{Tag: "member"},
 		},
 	}
 }
@@ -207,8 +208,11 @@ func (dps *DropboxConnectorImpl) MembersRemove(email string) {
 	}
 
 	a := team.MembersRemoveArg{
-		User:     dps.createUserSelectArg(email),
-		WipeData: false,
+		MembersDeactivateArg: team.MembersDeactivateArg{
+			User:     dps.createUserSelectArg(email),
+			WipeData: false,
+		},
+		KeepAccount: false,
 	}
 	r, err := client.MembersRemove(&a)
 	if err != nil {
@@ -229,7 +233,7 @@ func (dps *DropboxConnectorImpl) MembersAdd(email, givenName, surname string) {
 				MemberEmail:     email,
 				MemberGivenName: givenName,
 				MemberSurname:   surname,
-				Role:            &team.AdminTier{Tag: "member_only"},
+				Role:            &team.AdminTier{Tagged: dropbox.Tagged{Tag: "member_only"}},
 			},
 		},
 	}
