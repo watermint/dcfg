@@ -49,12 +49,13 @@ func getDropboxTokenFromConsole() string {
 	return code
 }
 
-func updateDropboxToken(context context.ExecutionContext) {
+func updateDropboxToken(ctx context.ExecutionContext) {
 	token := getDropboxTokenFromConsole()
-	path := context.Options.PathDropboxToken()
+	path := ctx.Options.PathDropboxToken()
+	dt := context.NewDropboxToken(token)
 
-	verifyDropboxToken(context, token)
-	err := file.SaveJSON(path, token)
+	verifyDropboxToken(ctx, token)
+	err := file.SaveJSON(path, dt)
 	if err != nil {
 		seelog.Errorf("Unable to write Dropbox token file", path, err)
 		explorer.FatalShutdown("Ensure file [%s] is appropriate JSON format.", path)

@@ -12,6 +12,10 @@ import (
 func DispatchAuth(context context.ExecutionContext) {
 	switch {
 	case context.Options.IsModeAuthGoogle():
+		if err := context.InitGoogleAuth(); err != nil {
+			seelog.Errorf("Initialisation failure: %v", err)
+			explorer.FatalShutdown("Please review file content of: %s", context.Options.PathGoogleClientSecret())
+		}
 		seelog.Trace("Start Auth Sequence: Google")
 		auth.AuthGoogle(context)
 	case context.Options.IsModeAuthDropbox():
@@ -21,7 +25,10 @@ func DispatchAuth(context context.ExecutionContext) {
 }
 
 func DispatchSync(context context.ExecutionContext) {
-	context.InitForSync()
+	if err := context.InitForSync(); err != nil {
+		seelog.Errorf("Initialisation failure: %v", err)
+		explorer.FatalShutdown("Please review configuration")
+	}
 	if context.Options.IsModeSyncUserProvision() {
 		seelog.Trace("Start Sync: User Provision")
 		seelog.Infof("Provisioning Users (Google Users -> Dropbox Users)")
@@ -44,6 +51,7 @@ func DispatchSync(context context.ExecutionContext) {
 
 func Dispatch(context context.ExecutionContext) {
 	defer explorer.Report()
+
 	switch {
 	case context.Options.IsModeAuth():
 		DispatchAuth(context)

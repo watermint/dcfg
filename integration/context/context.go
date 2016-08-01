@@ -2,6 +2,7 @@ package context
 
 import (
 	"errors"
+	"github.com/cihub/seelog"
 	"github.com/dropbox/dropbox-sdk-go-unofficial"
 	"github.com/watermint/dcfg/cli"
 	"github.com/watermint/dcfg/common/file"
@@ -32,6 +33,12 @@ type DropboxToken struct {
 	TeamManagementToken string `json:"token-team-management"`
 }
 
+func NewDropboxToken(mgmtToken string) DropboxToken {
+	return DropboxToken{
+		TeamManagementToken: mgmtToken,
+	}
+}
+
 func (e *ExecutionContext) CreateGoogleClientByToken(token *oauth2.Token) (*admin.Service, error) {
 	context := context.Background()
 	client := e.GoogleClientConfig.Client(context, token)
@@ -52,6 +59,7 @@ func (e *ExecutionContext) loadGoogleClient() error {
 }
 
 func (e *ExecutionContext) loadGoogleClientConfig() error {
+	seelog.Tracef("Loading Google Client Config: %s", e.Options.PathGoogleClientSecret())
 	json, err := ioutil.ReadFile(e.Options.PathGoogleClientSecret())
 	if err != nil {
 		return err
@@ -102,6 +110,13 @@ func (e *ExecutionContext) InitDropboxClient() error {
 		return err
 	}
 	if err := e.loadDropboxClient(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *ExecutionContext) InitGoogleAuth() error {
+	if err := e.loadGoogleClientConfig(); err != nil {
 		return err
 	}
 	return nil
