@@ -1,13 +1,13 @@
 language: go
 go:
- - 1.6.2
+ - 1.6
 
 install:
  - go get -u golang.org/x/tools/cmd/cover
  - go get -u github.com/modocache/gover
  - go get -u github.com/mattn/goveralls
  - go get -u github.com/cihub/seelog
- - go get -u github.com/dropbox/dropbox-sdk-go-unofficial
+ - go get -u github.com/dropbox/dropbox-sdk-go-unofficial/dropbox
  - go get -u google.golang.org/api/admin/directory/v1
  - go get -u google.golang.org/cloud/compute/metadata
 
