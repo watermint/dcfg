@@ -1,0 +1,18 @@
+package: github.com/watermint/dcfg
+import:
+- package: github.com/cihub/seelog
+  version: v2.6
+- package: github.com/dropbox/dropbox-sdk-go-unofficial
+  subpackages:
+  - dropbox
+  - dropbox/team
+  - dropbox/team_common
+- package: golang.org/x/net
+  subpackages:
+  - context
+- package: golang.org/x/oauth2
+  subpackages:
+  - google
+- package: google.golang.org/api
+  subpackages:
+  - admin/directory/v1

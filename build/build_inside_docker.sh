@@ -10,8 +10,11 @@ for t in $TARGET_OS; do
   mkdir -p "$BUILD/$t";
 done
 
+cd $PROJECT_ROOT
+glide install
+
 echo Testing...
-go test github.com/watermint/dcfg/...
+go test  $(glide novendor)
 if [ x"$?" != x"0" ]; then
   echo Test failed: $?
   exit 1

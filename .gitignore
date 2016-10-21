@@ -3,5 +3,6 @@
 /pkg
 /dist
 /.idea
+/vendor
 *.iml
 .DS_Store
