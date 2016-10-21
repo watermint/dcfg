@@ -3,13 +3,17 @@ go:
  - 1.7
  - tip
 
+before_install:
+ - go get golang.org/x/tools/cmd/cover
+ - go get github.com/modocache/gover
+ - go get github.com/mattn/goveralls
+ - go get github.com/Masterminds/glide
+
 install:
- - go get -u golang.org/x/tools/cmd/cover
- - go get -u github.com/modocache/gover
- - go get -u github.com/mattn/goveralls
+ - glide install
 
 script:
- - go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -L 1 sh -c
+ - go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' $(glide novendor) | xargs -L 1 sh -c
  - gover
 
 after_success:
