@@ -1,0 +1,57 @@
+hash: 723d134340d78973441f8521dcb7edc71442bdb7676ae90c075e88cb332295fc
+updated: 2018-04-03T17:43:58.47493+09:00
+imports:
+- name: cloud.google.com/go
+  version: 6cd8fd08c73b5a9065920f4b2128562506e062cf
+  subpackages:
+  - compute/metadata
+- name: github.com/cihub/seelog
+  version: d2c6e5aa9fbfdd1c624e140287063c7730654115
+- name: github.com/dropbox/dropbox-sdk-go-unofficial
+  version: f0b3f3ded6d415a94e83e9a514fb8025e4e6be31
+  subpackages:
+  - dropbox
+  - dropbox/async
+  - dropbox/common
+  - dropbox/file_properties
+  - dropbox/team
+  - dropbox/team_common
+  - dropbox/team_policies
+  - dropbox/users
+  - dropbox/users_common
+- name: github.com/golang/protobuf
+  version: e09c5db296004fbe3f74490e84dcd62c3c5ddb1b
+  subpackages:
+  - proto
+- name: golang.org/x/net
+  version: b68f30494add4df6bd8ef5e82803f308e7f7c59c
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/oauth2
+  version: 921ae394b9430ed4fb549668d7b087601bd60a81
+  subpackages:
+  - google
+  - internal
+  - jws
+  - jwt
+- name: google.golang.org/api
+  version: 3072d9cd7f79a11909b84fdb7c9c8b9e60a57fbd
+  subpackages:
+  - admin/directory/v1
+  - gensupport
+  - googleapi
+  - googleapi/internal/uritemplates
+- name: google.golang.org/appengine
+  version: ad39d7fab7c60b2493fdc318c3d2cdb2128f92a4
+  subpackages:
+  - internal
+  - internal/app_identity
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/modules
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+testImports: []

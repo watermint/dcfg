@@ -10,7 +10,7 @@ func TestFileExist(t *testing.T) {
 		t.Errorf("%s found!", notFound)
 	}
 	if !FileExist(found) {
-		t.Error("%s not found", found)
+		t.Errorf("%s not found", found)
 	}
 }
 
@@ -26,7 +26,7 @@ func TestFileExistAndReadable(t *testing.T) {
 		t.Errorf("%s should not marked as readable", directory)
 	}
 	if !FileExistAndReadable(found) {
-		t.Error("%s not found", found)
+		t.Errorf("%s not found", found)
 	}
 }
 

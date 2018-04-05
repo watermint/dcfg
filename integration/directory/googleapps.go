@@ -1,4 +1,4 @@
-package googleapps
+package directory
 
 import (
 	"github.com/cihub/seelog"
@@ -291,4 +291,31 @@ func (g *GoogleAppsMock) CustomerUsers(customerId string) []*admin.User {
 	} else {
 		return []*admin.User{}
 	}
+}
+
+
+func NewGoogleEmailResolver(ctx context.ExecutionContext) EmailResolver {
+	return &GoogleEmailResolverImpl{
+		ExecutionContext: ctx,
+	}
+}
+
+type GoogleEmailResolverImpl struct {
+	ExecutionContext context.ExecutionContext
+}
+
+func (g *GoogleEmailResolverImpl) EmailExist(email string) (bool, error) {
+	client := g.ExecutionContext.GoogleClient
+
+	seelog.Tracef("Loading Google User for email[%s]", email)
+	u, err := client.Users.Get(email).Do()
+	if err != nil {
+		seelog.Tracef("Unable to load an user email[%s]: error[%s]", email, err)
+		return false, nil
+	}
+	seelog.Tracef("Loaded user[%s]: Id[%s]", email, u.Id)
+	seelog.Tracef("Loaded user[%s]: Name[%s]", email, u.Name)
+	seelog.Tracef("Loaded user[%s]: CustomerId[%s]", email, u.CustomerId)
+
+	return true, nil
 }

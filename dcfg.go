@@ -27,9 +27,9 @@ func main() {
 
 	defer seelog.Flush()
 
-	context := context.ExecutionContext{
+	ec := context.ExecutionContext{
 		Options: options,
 	}
 
-	dispatch.Dispatch(context)
+	dispatch.Dispatch(ec)
 }

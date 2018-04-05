@@ -2,7 +2,6 @@ package directory
 
 import (
 	"github.com/watermint/dcfg/integration/context"
-	"github.com/watermint/dcfg/integration/directory/googleapps"
 	"google.golang.org/api/admin/directory/v1"
 	"testing"
 )
@@ -22,7 +21,7 @@ func TestGoogleDirectory_Load(t *testing.T) {
 }
 
 func TestGoogleDirectory_GroupSimple(t *testing.T) {
-	ga := googleapps.GoogleAppsMock{
+	ga := GoogleAppsMock{
 		MockGroups: []*admin.Group{
 			&admin.Group{
 				Id:    "id-g1",

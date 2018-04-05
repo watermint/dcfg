@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 export TARGET_OS="windows darwin linux"
 BUILD=`pwd`/out

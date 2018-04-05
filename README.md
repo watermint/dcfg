@@ -102,6 +102,12 @@ dcfg -path *DCFG directory* -group-provision-list *white list file* -sync user-p
 
 add option `-dryrun=false`
 
+# Build
+
+```bash
+$ docker build -t dcfg . && rm -fr /tmp/dist && docker run -v /tmp/dist:/dist:rw --rm dcfg
+```
+
 # LICENSE
 
 Copyright (c) 2016 Takayuki Okazaki

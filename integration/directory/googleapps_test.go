@@ -1,4 +1,4 @@
-package googleapps
+package directory
 
 import (
 	"fmt"

@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"github.com/cihub/seelog"
 	"github.com/watermint/dcfg/integration/context"
-	"github.com/watermint/dcfg/integration/directory/googleapps"
 	"google.golang.org/api/admin/directory/v1"
 )
 
 type GoogleDirectory struct {
-	googleApps googleapps.GoogleApps
+	googleApps GoogleApps
 
 	// All emails
 	emailTypes map[string]int
@@ -26,13 +25,13 @@ const (
 
 func NewGoogleDirectory(executionContext context.ExecutionContext) *GoogleDirectory {
 	gd := GoogleDirectory{
-		googleApps: googleapps.NewGoogleApps(executionContext),
+		googleApps: NewGoogleApps(executionContext),
 	}
 	gd.load()
 	return &gd
 }
 
-func NewGoogleDirectoryForTest(ga googleapps.GoogleApps) *GoogleDirectory {
+func NewGoogleDirectoryForTest(ga GoogleApps) *GoogleDirectory {
 	gd := GoogleDirectory{
 		googleApps: ga,
 	}
@@ -42,7 +41,7 @@ func NewGoogleDirectoryForTest(ga googleapps.GoogleApps) *GoogleDirectory {
 
 func (g *GoogleDirectory) Group(groupKey string) (Group, bool) {
 	seelog.Tracef("Loading Google Group: GroupId[%s]", groupKey)
-	group, exist := googleapps.FindGroup(g.googleApps, groupKey)
+	group, exist := FindGroup(g.googleApps, groupKey)
 	if !exist {
 		return Group{}, false
 	}
@@ -91,7 +90,7 @@ func (g *GoogleDirectory) extractMember(member *admin.Member, parentGroupKey str
 	case "CUSTOMER":
 		seelog.Tracef("Google Group: Loading Customer: Nest[%d] Parent[%s] Customer[%s]", nest, parentGroupKey, member.Id)
 		for _, user := range g.googleApps.CustomerUsers(member.Id) {
-			_, emails := googleapps.UserEmails(user)
+			_, emails := UserEmails(user)
 
 			for _, e := range emails {
 				members[e] = Account{
@@ -116,7 +115,7 @@ func (g *GoogleDirectory) preloadEmails() {
 
 	// User emails
 	for _, user := range g.googleApps.Users() {
-		primary, emails := googleapps.UserEmails(user)
+		primary, emails := UserEmails(user)
 
 		for _, e := range emails {
 			g.emailTypes[e] = GOOGLE_EMAIL_TYPE_ALIAS
@@ -191,55 +190,55 @@ func CreateGoogleDirectoryForIntegrationTest() *GoogleDirectory {
 	}
 
 	groups := []*admin.Group{
-		&admin.Group{
+		{
 			Id:    "tokyo",
 			Email: "tokyo@example.com",
 			Name:  "Tokyo",
 		},
-		&admin.Group{
+		{
 			Id:    "minato",
 			Email: "minato@example.com",
 			Name:  "Minato",
 		},
-		&admin.Group{
+		{
 			Id:    "meguro",
 			Email: "meguro@example.com",
 			Name:  "Meguro",
 		},
-		&admin.Group{
+		{
 			Id:    "all",
 			Email: "all@example.com",
 			Name:  "All",
 		},
 	}
 	membersTokyo := []*admin.Member{
-		&admin.Member{
+		{
 			Type:  "USER",
 			Email: "a@example.com",
 		},
-		&admin.Member{
+		{
 			Type:  "GROUP",
 			Email: "minato@example.com",
 		},
-		&admin.Member{
+		{
 			Type:  "GROUP",
 			Email: "meguro@example.com",
 		},
 	}
 	membersMinato := []*admin.Member{
-		&admin.Member{
+		{
 			Type:  "USER",
 			Email: "b@example.com",
 		},
 	}
 	membersMeguro := []*admin.Member{
-		&admin.Member{
+		{
 			Type:  "USER",
 			Email: "c@example.com",
 		},
 	}
 	membersAll := []*admin.Member{
-		&admin.Member{
+		{
 			Type: "CUSTOMER",
 			Id:   "mock_customer",
 		},
@@ -252,7 +251,7 @@ func CreateGoogleDirectoryForIntegrationTest() *GoogleDirectory {
 		"meguro@example.com": membersMeguro,
 	}
 
-	ga := googleapps.GoogleAppsMock{
+	ga := GoogleAppsMock{
 		MockCustomers: map[string][]*admin.User{
 			"mock_customer": users,
 		},

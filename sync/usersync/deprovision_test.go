@@ -33,6 +33,7 @@ func TestUserSyncRemoveUser(t *testing.T) {
 		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
 		GoogleEmail:      &googleEmail,
+		GoogleConfirm:    &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -71,6 +72,7 @@ func TestUserSyncRemoveUser2(t *testing.T) {
 		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
 		GoogleEmail:      &googleEmail,
+		GoogleConfirm:    &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -107,6 +109,7 @@ func TestUserSyncEqual(t *testing.T) {
 		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
 		GoogleEmail:      &googleEmail,
+		GoogleConfirm:    &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -141,6 +144,7 @@ func TestUserSyncGoogleHasMore(t *testing.T) {
 		GoogleAccounts:   &directory.AccountDirectoryMock{},
 		GoogleGroups:     &directory.GroupDirectoryMock{},
 		GoogleEmail:      &googleEmail,
+		GoogleConfirm:    &googleEmail,
 	}
 	userSync.SyncDeprovision()
 
@@ -195,6 +199,7 @@ func TestUserSync_SyncDeprovision(t *testing.T) {
 		GoogleAccounts:   gd,
 		GoogleGroups:     gd,
 		GoogleEmail:      gd,
+		GoogleConfirm:    gd,
 	}
 	userSync.SyncDeprovision()
 
