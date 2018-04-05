@@ -6,6 +6,7 @@ import (
 	"github.com/watermint/dcfg/integration/auth"
 	"github.com/watermint/dcfg/integration/context"
 	"google.golang.org/api/admin/directory/v1"
+	"strings"
 )
 
 type GoogleApps interface {
@@ -173,6 +174,14 @@ func (g *GoogleAppsImpl) Users() []*admin.User {
 		rawUsers = append(rawUsers, users.Users...)
 		token = users.NextPageToken
 	}
+	seelog.Tracef("Google users loaded: %d user(s)", len(rawUsers))
+
+	traceUsers := make([]string, len(rawUsers))
+	for i, u := range rawUsers {
+		traceUsers[i] = u.PrimaryEmail
+	}
+	seelog.Tracef("Loaded Google users: [%s]", strings.Join(traceUsers, ","))
+
 	return rawUsers
 }
 
@@ -200,6 +209,13 @@ func (g *GoogleAppsImpl) Groups() []*admin.Group {
 		rawGroups = append(rawGroups, groups.Groups...)
 		token = groups.NextPageToken
 	}
+	seelog.Tracef("Google group(s) loaded: %d group(s)", len(rawGroups))
+
+	traceGroups := make([]string, len(rawGroups))
+	for i, g := range rawGroups {
+		traceGroups[i] = g.Email
+	}
+	seelog.Tracef("Loaded Google groups: [%s]", strings.Join(traceGroups, ","))
 
 	return rawGroups
 }
@@ -227,6 +243,13 @@ func (g *GoogleAppsImpl) GroupMembers(groupEmail string) []*admin.Member {
 		rawMember = append(rawMember, m.Members...)
 		token = m.NextPageToken
 	}
+	seelog.Tracef("Google member(s) loaded: %d member(s) for groupKey[%s]", len(rawMember), groupEmail)
+	traceMembers := make([]string, len(rawMember))
+	for i, u := range rawMember {
+		traceMembers[i] = u.Email
+	}
+	seelog.Tracef("Loaded Google member for groupKey[%s]: [%s]", groupEmail, strings.Join(traceMembers, ","))
+
 	return rawMember
 }
 
@@ -254,6 +277,14 @@ func (g *GoogleAppsImpl) CustomerUsers(customerId string) []*admin.User {
 		rawUsers = append(rawUsers, r.Users...)
 		token = r.NextPageToken
 	}
+	seelog.Tracef("Google Customer Member loaded: %d user(s)", len(rawUsers))
+
+	traceUsers := make([]string, len(rawUsers))
+	for i, u := range rawUsers {
+		traceUsers[i] = u.PrimaryEmail
+	}
+	seelog.Tracef("Loaded Google users: [%s]", strings.Join(traceUsers, ","))
+
 	return rawUsers
 }
 
@@ -316,6 +347,8 @@ func (g *GoogleEmailResolverImpl) EmailExist(email string) (bool, error) {
 	seelog.Tracef("Loaded user[%s]: Id[%s]", email, u.Id)
 	seelog.Tracef("Loaded user[%s]: Name[%s]", email, u.Name)
 	seelog.Tracef("Loaded user[%s]: CustomerId[%s]", email, u.CustomerId)
+
+	client.Users.List().ShowDeleted("true")
 
 	return true, nil
 }

@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-export TARGET_OS="windows darwin linux"
 BUILD=`pwd`/out
 DIST=/dist
-APP_VERSION=`cat $PROJECT_ROOT/version`
+if [ "$BUILD_ID"x = ""x ]; then
+  BUILD_ID=0
+fi
+APP_VERSION=`cat $PROJECT_ROOT/version`.$BUILD_ID
+
 echo building: $APP_VERSION
 echo UID: `id`
-
-for t in $TARGET_OS; do
-  mkdir -p "$BUILD/$t";
-done
 
 cd $PROJECT_ROOT
 glide install
@@ -21,11 +20,11 @@ if [ x"$?" != x"0" ]; then
   exit 1
 fi
 
-for t in $TARGET_OS; do
-  echo Building: $t
-  GOOS=$t GOARCH=amd64 go build -ldflags "-X main.AppVersion=$APP_VERSION" -o "$BUILD/$t/dcfg" github.com/watermint/dcfg
-done
+LD_FLAGS="-X main.AppVersion=$APP_VERSION"
 
-mv $BUILD/windows/dcfg $BUILD/windows/dcfg.exe # workaround
+GOOS=windows GOARCH=386   go build --ldflags "$LD_FLAGS" -o $BUILD/tbx-$APP_VERSION-win.exe github.com/watermint/dcfg
+GOOS=linux   GOARCH=386   go build --ldflags "$LD_FLAGS" -o $BUILD/tbx-$APP_VERSION-linux   github.com/watermint/dcfg
+GOOS=darwin  GOARCH=amd64 go build --ldflags "$LD_FLAGS" -o $BUILD/tbx-$APP_VERSION-darwin  github.com/watermint/dcfg
+
 cd $BUILD
 zip -9 -r $DIST/dcfg-$APP_VERSION.zip .
